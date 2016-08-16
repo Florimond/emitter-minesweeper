@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="mines.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
+
+    <title></title>
+	<meta charset="utf-8" />
+    <script>
+        var gameController = function ($scope) {
+            $scope.playerScore = [0, 0];
+            var playerScore = $scope.playerScore;
+            var turns = 0;
+
+            $scope.beach = [];
+            var beach = $scope.beach;
+            
+            function initBeach()
+            {
+                for (var i = 0; i < 16; ++i) {
+                    $scope.beach[i] = [];
+                    for (var j = 0; j < 16; ++j) {
+                        $scope.beach[i][j] = {
+                            covered: true,
+                            mine: false,
+                            neighbouringMines: 0,
+                            class: ''
+                        };
+                    }
+                }
+
+                var mines = 51;
+                do
+                {
+                    var x = Math.floor(Math.random() * 15);
+                    var y = Math.floor(Math.random() * 15);
+
+                    if ($scope.beach[x][y].mine == false) {
+                        --mines;
+                        $scope.beach[x][y].mine = true;
+                        beach[x][y].class = "red-flag";
+                        incNeighbours(x, y);
+                    }
+                }
+                while (mines)
+            }
+
+
+            $scope.getClass = function (x, y) {
+                var tile = $scope.beach[x][y];
+                if (tile.value)
+                {
+                    return "mine mines" + tile.neighbouringMines;
+                }
+                return "";
+            };
+
+            function applyToNeighbours(x, y, f)
+            {
+                for (var xOffset = -1; xOffset < 2; ++xOffset) {
+                    var newX = x + xOffset;
+                    if (newX < 0) continue;
+                    if (newX > 15) break;
+                    for (var yOffset = -1; yOffset < 2; ++yOffset) {
+                        var newY = y + yOffset;
+                        if (newY < 0) continue;
+                        if (newY > 15) break;
+
+                        f(newX, newY);
+                    }
+                }
+            }
+
+            function incNeighbours(x, y)
+            {
+                applyToNeighbours(x, y, function (x, y) {
+                    ++beach[x][y].neighbouringMines;
+                });
+            }
+
+            function explore(x, y)
+            {
+                applyToNeighbours(x, y, function (x, y) {
+                    var tile = beach[x][y];
+                    if (tile.covered && !tile.mine) {
+                        tile.covered = false;
+                        if (tile.neighbouringMines == 0) explore(x, y);
+                    }
+                });
+            }
+
+            $scope.click = function (x, y) {
+                var tile = $scope.beach[x][y];
+                tile.covered = false;
+                if (tile.mine)
+                {
+                    var playerNumber = turns % 2;
+                    ++playerScore[playerNumber];
+                    tile.class = "flag" + playerNumber;
+                }
+                else
+                {
+                    ++turns;
+                    if (tile.neighbouringMines == 0)
+                    {
+                        explore(x, y);
+                    }
+                    else
+                    {
+                        tile.class = "mine mines" + tile.neighbouringMines;
+                    }
+                }
+            };
+
+            initBeach();
+        };
+        angular.module("app", [])
+.controller("gameController", gameController);
+    </script>
+
+</head>
+<body ng-app="app">
+
+    <div ng-controller="gameController">
+
+        <div style="float: left">
+            <div class="panel panel-danger" style="margin: 10px; width: 100px">
+                <div class="panel-heading" style="height: 250px">
+                    Player 1<br />
+                    Score : {{playerScore[0]}}
+                </div>
+            </div>
+            <div class="panel panel-info" style="margin: 10px; width: 100px">
+                <div class="panel-heading" style="height: 250px">
+                    Player 2<br />
+                    Score : {{playerScore[1]}}
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default" style="margin: 10px;display: inline-block;">
+
+            <div class="panel-body" style="display: inline-block">
+
+                <div style="background-image:url('sand.jpg'); background-repeat:repeat;display:inline-block ">
+                    <div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px">
+                        <div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="display: inline-block; width: 30px">
+                            <!-- Do not specify any height...-->
+                            <!-- ng-class="'mines'+beach[$parent.$index][$index].value"
+
+                                ng-show="!beach[$index][$parent.$index].covered"
+                                 -->
+                            <div ng-hide="beach[$index][$parent.$index].covered" class="tile" ng-class="beach[$index][$parent.$index].class">
+                                <div ng-hide="beach[$index][$parent.$index].mine == true || beach[$index][$parent.$index].neighbouringMines == 0">
+                                    {{beach[$index][$parent.$index].neighbouringMines}}
+                                </div>
+                            </div>
+
+                            <button ng-show="beach[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

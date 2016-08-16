@@ -1,0 +1,68 @@
+﻿.flag0
+{
+    background-repeat:no-repeat;
+    background-image: url(redFlag.png);
+    background-size: 20px;
+}
+
+
+.flag1
+{
+    background-repeat:no-repeat;
+    background-image: url(blueFlag.png);
+    background-size: 20px;
+}
+
+
+.tile
+{
+    box-sizing: border-box;
+    height: 20px;
+    width: 20px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.mine
+{
+    font-weight: bold;
+    font-size: 17px;
+    text-align: center;
+}
+
+.mines1
+{
+    color: blue;
+}
+
+.mines2
+{
+    color: darkseagreen;
+}
+
+.mines3
+{
+    color: red;
+}
+
+.mines4
+{
+    color: darkblue;
+}
+.mines5
+{
+    color: darkred;
+}
+.mines6
+{
+    color: cadetblue;
+}
+.mines7
+{
+    color: black;
+}
+.mines8
+{
+    color: gray;
+}
