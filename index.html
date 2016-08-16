@@ -5,12 +5,50 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="minesweeper.css" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
-
-    <title></title>
+	<script src="https://s3-eu-west-1.amazonaws.com/cdn.emitter.io/js/emitter.min.js" type="text/javascript"></script>
+    <title>Minesweeper</title>
 	<meta charset="utf-8" />
     <script>
+		function getGuid()
+		{
+			// See : http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+					var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+					return v.toString(16);
+				});
+		}
+	
+		var emitterKey = "sTO6MGJ7XDKDns8L1I4PJgW5BALdWzM_";
+		var emitter = emitter.connect(
+		{
+			secure: true
+		});
+		
+
+		
+
+	
         var gameController = function ($scope) {
-            $scope.playerScore = [0, 0];
+            $scope.gameId = "a";//getGuid();
+			emitter.subscribe(
+			{
+				key: emitterKey,
+				channel: "minesweeper/" + $scope.gameId,
+				last: 5
+			});
+			
+
+			
+			$scope.messageReceived = function(msg)
+			{
+				console.log('emitter: received ' + msg.asString() );
+				var json = JSON.parse(msg.binary);
+				$scope.click(json.parameters.x, json.parameters.y, false);
+			}
+			
+			emitter.on('message', $scope.messageReceived,5);
+			
+			$scope.playerScore = [0, 0];
             var playerScore = $scope.playerScore;
             var turns = 0;
 
@@ -91,7 +129,24 @@
                 });
             }
 
-            $scope.click = function (x, y) {
+            $scope.click = function (x, y, local=true) {
+	            if (local)
+				{
+					emitter.publish({
+						key: emitterKey,
+						channel: "minesweeper/" + $scope.gameId,
+						ttl: 1200,
+						message: JSON.stringify({
+							action: 'click',
+							player: 1,
+							parameters: {
+							x: x,
+							y: y}
+						})
+					});
+
+				}				
+				
                 var tile = $scope.beach[x][y];
                 tile.covered = false;
                 if (tile.mine)
@@ -112,6 +167,7 @@
                         tile.class = "mine mines" + tile.neighbouringMines;
                     }
                 }
+				$scope.$apply();
             };
 
             initBeach();
@@ -122,53 +178,55 @@
 
 </head>
 <body ng-app="app">
-
+	
     <div ng-controller="gameController">
+	Game Id : {{gameId}}
+		<div>
+			<div style="float: left">
+				<div class="panel panel-danger" style="margin: 10px; width: 100px">
+					<div class="panel-heading" style="height: 250px">
+						Player 1<br />
+						Score : {{playerScore[0]}}
+					</div>
+				</div>
+				<div class="panel panel-info" style="margin: 10px; width: 100px">
+					<div class="panel-heading" style="height: 250px">
+						Player 2<br />
+						Score : {{playerScore[1]}}
+					</div>
+				</div>
+			</div>
 
-        <div style="float: left">
-            <div class="panel panel-danger" style="margin: 10px; width: 100px">
-                <div class="panel-heading" style="height: 250px">
-                    Player 1<br />
-                    Score : {{playerScore[0]}}
-                </div>
-            </div>
-            <div class="panel panel-info" style="margin: 10px; width: 100px">
-                <div class="panel-heading" style="height: 250px">
-                    Player 2<br />
-                    Score : {{playerScore[1]}}
-                </div>
-            </div>
-        </div>
+			<div class="panel panel-default" style="margin: 10px;display: inline-block;">
 
-        <div class="panel panel-default" style="margin: 10px;display: inline-block;">
+				<div class="panel-body" style="display: inline-block">
 
-            <div class="panel-body" style="display: inline-block">
+					<div style="background-image:url('sand.jpg'); background-repeat:repeat;display:inline-block ">
+						<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px">
+							<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="display: inline-block; width: 30px">
+								<!-- Do not specify any height...-->
+								<!-- ng-class="'mines'+beach[$parent.$index][$index].value"
 
-                <div style="background-image:url('sand.jpg'); background-repeat:repeat;display:inline-block ">
-                    <div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px">
-                        <div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="display: inline-block; width: 30px">
-                            <!-- Do not specify any height...-->
-                            <!-- ng-class="'mines'+beach[$parent.$index][$index].value"
+									ng-show="!beach[$index][$parent.$index].covered"
+									 -->
+								<div ng-hide="beach[$index][$parent.$index].covered" class="tile" ng-class="beach[$index][$parent.$index].class">
+									<div ng-hide="beach[$index][$parent.$index].mine == true || beach[$index][$parent.$index].neighbouringMines == 0">
+										{{beach[$index][$parent.$index].neighbouringMines}}
+									</div>
+								</div>
 
-                                ng-show="!beach[$index][$parent.$index].covered"
-                                 -->
-                            <div ng-hide="beach[$index][$parent.$index].covered" class="tile" ng-class="beach[$index][$parent.$index].class">
-                                <div ng-hide="beach[$index][$parent.$index].mine == true || beach[$index][$parent.$index].neighbouringMines == 0">
-                                    {{beach[$index][$parent.$index].neighbouringMines}}
-                                </div>
-                            </div>
+								<button ng-show="beach[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
 
-                            <button ng-show="beach[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
+							</div>
 
-                        </div>
+						</div>
 
-                    </div>
+					</div>
+				</div>
 
-                </div>
-            </div>
-
-        </div>
-    </div>
+			</div>
+		</div>
+	</div>
 
 </body>
 </html>
