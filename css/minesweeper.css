@@ -1,7 +1,7 @@
 ﻿.flag0
 {
     background-repeat:no-repeat;
-    background-image: url(images/redFlag.png);
+    background-image: url(../images/redFlag.png);
     background-size: 20px;
 }
 
@@ -9,7 +9,7 @@
 .flag1
 {
     background-repeat:no-repeat;
-    background-image: url(images/blueFlag.png);
+    background-image: url(../images/blueFlag.png);
     background-size: 20px;
 }
 
