@@ -1,2 +1,3 @@
 angular.module("minesweeper", ["guidGenerator"])
-.controller("gameController", gameController);
+.controller("gameController", gameController)
+.controller("mainController", mainController);

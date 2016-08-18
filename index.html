@@ -19,15 +19,21 @@
 
 	<script src="services/guidGenerator.js"></script>
     <script src="controllers/gameController.js"></script>
+	<script src="controllers/mainController.js"></script>
 	<script src="app.js"></script>
 	<title>Minesweeper</title>
 	<meta charset="utf-8" />
 
 </head>
-<body ng-app="minesweeper">
+<body ng-app="minesweeper" ng-controller="mainController">
 
-	<div ng-include="'templates/board.html'">
+	<div class="panel panel-default" style="margin: 10px; height: 800px; width: 600px; background-image:url(images/sand.jpg)">
+		<div class="panel-content" style="">
+			<div ng-include="view">
+			</div>
+		</div>
 	</div>
+
 
 </body>
 </html>
