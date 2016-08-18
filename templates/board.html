@@ -21,7 +21,7 @@
 					</div>
 				</div>
 
-				<div style="padding: 10px;display: inline-block; border: dashed 3px red">
+				<div style="margin-left: 10px; padding: 10px;display: inline-block; border: dashed 3px red">
 
 						<div style="background-image:url('images/sand.jpg'); background-repeat:repeat;display:inline-block ">
 							<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px">
@@ -36,8 +36,8 @@
 											{{beach[$index][$parent.$index].neighbouringMines}}
 										</div>
 									</div>
-
-									<button ng-disabled="true" ng-show="beach[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
+														 
+									<button ng-disabled="gameState != GAME_STATES.WAITING_MOVE_LOCAL" ng-show="beach[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
 
 								</div>
 
