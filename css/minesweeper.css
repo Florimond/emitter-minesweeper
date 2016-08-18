@@ -1,7 +1,13 @@
-﻿.flag0
+﻿@import 'https://fonts.googleapis.com/css?family=Short+Stack';
+
+body {
+   font-family: 'Short Stack', cursive;
+}
+
+.flag0
 {
     background-repeat:no-repeat;
-    background-image: url(images/redFlag.png);
+    background-image: url(/images/redFlag.png);
     background-size: 20px;
 }
 
@@ -9,7 +15,7 @@
 .flag1
 {
     background-repeat:no-repeat;
-    background-image: url(images/blueFlag.png);
+    background-image: url(/images/blueFlag.png);
     background-size: 20px;
 }
 
@@ -65,4 +71,35 @@
 .mines8
 {
     color: gray;
+}
+
+.panel-main{
+    height: 580px;
+    padding: 10px;
+    background-image: url(/images/sand.jpg);
+}
+
+.wide {
+    width: 100%;
+}
+
+.center {
+    text-align: center;
+}
+
+.board {
+    width: 480px;
+    height: 480px;
+    display:inline-block;
+}
+
+.btn-tile {
+    height: 30px;
+    width: 30px;
+    box-sizing: border-box;
+    box-shadow: none;
+}
+
+.padded {
+    padding-bottom: 15px;
 }
