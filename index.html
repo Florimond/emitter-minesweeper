@@ -26,14 +26,15 @@
 
 </head>
 <body ng-app="minesweeper" ng-controller="mainController">
-
-	<div class="panel panel-default" style="margin: 10px; height: 580px; width: 750px; background-image:url(images/sand.jpg)">
-		<div class="panel-content" style="">
-			<div ng-include="view">
+	<div class="container container-wide">
+		<div class="content " role="main">
+			<div class="panel panel-default panel-main" style="margin: 10px; height: 580px;  background-image:url(images/sand.jpg)">
+				<div class="panel-content">
+					<div ng-include="view">
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-
-
 </body>
 </html>
