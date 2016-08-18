@@ -216,5 +216,7 @@
 				$scope.gameState = GAME_STATES.WAITING_SYNC;
 			}
 
-            
+            if ($scope.playerId == 0)
+				$scope.startGame();
+			
         };

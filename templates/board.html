@@ -1,52 +1,51 @@
     <div ng-controller="gameController">
 		<div>
 			<label for="gameNumber">Game number</label>
-			<input class="form-control input-md" id="gameNumber" type="text" ng-model="gameId" style="width: 300px; display: inline-block"></input>
+			<input readonly class="form-control input-md" id="gameNumber" type="text" ng-model="gameId" style="width: 300px; display: inline-block"></input>
 			
 		</div>
 		<div>
-			<div style="float: left">
-				<div class="panel panel-danger" style="margin: 10px; width: 100px">
-					<div class="panel-heading" style="height: 250px">
-						Player 1<br />
-						Score : {{playerScore[0]}}
+			<div style="margin-top: 10px">
+				<div style="float: left">
+					<div class="panel panel-danger" style=" width: 100px">
+						<div class="panel-heading" style="height: 250px">
+							Player 1<br />
+							Score : {{playerScore[0]}}
+						</div>
+					</div>
+					<div class="panel panel-info" style=" width: 100px">
+						<div class="panel-heading" style="height: 250px">
+							Player 2<br />
+							Score : {{playerScore[1]}}
+						</div>
 					</div>
 				</div>
-				<div class="panel panel-info" style="margin: 10px; width: 100px">
-					<div class="panel-heading" style="height: 250px">
-						Player 2<br />
-						Score : {{playerScore[1]}}
-					</div>
-				</div>
-			</div>
 
-			<div class="panel panel-default" style="margin: 10px;display: inline-block;">
+				<div style="padding: 10px;display: inline-block; border: dashed 3px red">
 
-				<div class="panel-body" style="display: inline-block">
+						<div style="background-image:url('images/sand.jpg'); background-repeat:repeat;display:inline-block ">
+							<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px">
+								<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="display: inline-block; width: 30px">
+									<!-- Do not specify any height...-->
+									<!-- ng-class="'mines'+beach[$parent.$index][$index].value"
 
-					<div style="background-image:url('images/sand.jpg'); background-repeat:repeat;display:inline-block ">
-						<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px">
-							<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="display: inline-block; width: 30px">
-								<!-- Do not specify any height...-->
-								<!-- ng-class="'mines'+beach[$parent.$index][$index].value"
-
-									ng-show="!beach[$index][$parent.$index].covered"
-									 -->
-								<div ng-hide="beach[$index][$parent.$index].covered" class="tile" ng-class="beach[$index][$parent.$index].class">
-									<div ng-hide="beach[$index][$parent.$index].mine == true || beach[$index][$parent.$index].neighbouringMines == 0">
-										{{beach[$index][$parent.$index].neighbouringMines}}
+										ng-show="!beach[$index][$parent.$index].covered"
+										 -->
+									<div ng-hide="beach[$index][$parent.$index].covered" class="tile" ng-class="beach[$index][$parent.$index].class">
+										<div ng-hide="beach[$index][$parent.$index].mine == true || beach[$index][$parent.$index].neighbouringMines == 0">
+											{{beach[$index][$parent.$index].neighbouringMines}}
+										</div>
 									</div>
-								</div>
 
-								<button ng-show="beach[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
+									<button ng-disabled="true" ng-show="beach[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
+
+								</div>
 
 							</div>
 
 						</div>
 
-					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
