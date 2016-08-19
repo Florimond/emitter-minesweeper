@@ -60,6 +60,8 @@ var gameController = function ($scope, guidGenerator) {
 
 	$scope.beach = [];
 	
+	// TODO : service to manage the beach
+	// TODO : css class in a separate beach?
 	function initBeach()
 	{
 		for (var i = 0; i < 16; ++i) {
