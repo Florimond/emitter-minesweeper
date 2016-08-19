@@ -1,7 +1,7 @@
 <div>
 		<div style="padding-top: 150px;width: 150px; margin: auto">
 			<label for="nickname">Your nickname</label>
-			<input class="form-control input-md" id="nickname" type="text" style="width: 150px"></input>
+			<input class="form-control input-md" id="nickname" type="text" style="width: 150px" ng-model="$parent.players[0].name"></input>
 			<button ng-click="startGame()" type="button" class="btn btn-primary" style="width: 150px;margin: auto">Start a game</button>
 		</div>
 </div>

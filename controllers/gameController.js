@@ -5,7 +5,7 @@ var gameController = function ($scope, guidGenerator, beachService) {
 		WAITING_SYNC: 1,
 		WAITING_MOVE_LOCAL: 2,
 		WAITING_MOVE_REMOTE: 3
-	}
+	};
 	$scope.gameState = $scope.GAME_STATES.STOPPED;
 	
 	
@@ -71,6 +71,23 @@ var gameController = function ($scope, guidGenerator, beachService) {
 		}
 	};
 
+	function checkForWinner()
+	{
+		var sum = $scope.playerScore[0] + $scope.playerScore[1];
+		var remaining = $scope.beach.mines - sum;
+		var delta = abs($scope.playerScore[0] - $scope.playerScore[1]);
+		if (delta > remaining)
+		{
+			if ($scope.playerScore[$scope.thisPlayerId] > $scope.playerScore[($scope.thisPlayerId + 1) % 2])
+			{
+				alert("You WIN !");
+			}
+			else
+			{
+				alert("You loose.");
+			}
+		}
+	}
 
 	function discoverTile(x, y)
 	{
@@ -81,6 +98,7 @@ var gameController = function ($scope, guidGenerator, beachService) {
 			var playerNumber = turns % 2;
 			++playerScore[playerNumber];
 			tile.class = "flag" + playerNumber;
+			checkForWinner();
 		}
 		else
 		{
@@ -164,6 +182,9 @@ var gameController = function ($scope, guidGenerator, beachService) {
 		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
 	}
 
+	
+
+	
 	if ($scope.thisPlayerId == 0)
 		$scope.startGame();
 	else

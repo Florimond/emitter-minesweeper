@@ -1,5 +1,12 @@
 var mainController = function ($scope)
-{
+{	
+	$scope.players = [
+	{name: "Player 1",
+	score:0},
+	{name: "Player 2",
+	score:0}
+	];
+	
 	$scope.view = "templates/menu.html";
 	$scope.startGameMenu = function()
 	{
