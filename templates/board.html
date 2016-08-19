@@ -9,9 +9,11 @@
 				<div style="float: left">
 					<div class="panel panel-danger" style=" width: 150px">
 						<div class="panel-heading" style="height: 220px">
+							<div>
 							<img style="height: 50px" ng-show="turns % 2 == 0" src="images/Crystal_Clear_action_build.png"/>
+							</div>
 							{{players[0].name}}<br />
-							<img style="height: 50px" src="images/Crystal_Clear_app_virus_detected.png"/ > {{players[0].score}}
+							<img style="height: 50px" src="images/Crystal_Clear_app_virus_detected.png" /> {{players[0].score}}
 						</div>
 					</div>
 					<div style="height: 50px">
@@ -19,7 +21,9 @@
 					</div>
 					<div class="panel panel-info" style=" width: 150px">
 						<div class="panel-heading" style="height: 220px">
+							<div>
 							<img style="height: 50px"  ng-show="turns % 2 == 1" src="images/Crystal_Clear_action_build.png"/>
+							</div>
 							{{players[1].name}}<br />
 							<img style="height: 45px" src="images/Crystal_Clear_app_virus_detected_2.png"/ > {{players[1].score}}
 						</div>

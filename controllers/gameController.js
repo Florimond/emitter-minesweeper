@@ -8,16 +8,20 @@ var gameController = function ($scope, guidGenerator, beachService) {
 		
 		switch (json.type)
 		{
-			case "beach":
+			case "hello":
 				if ($scope.gameState == $scope.GAME_STATES.WAITING_SYNC && $scope.thisPlayerId == 1)
 				{
-					$scope.beach = json.data;
+					$scope.beach = json.data.beach;
+					$scope.players[0].name = json.data.playerName;
 					$scope.gameState = $scope.GAME_STATES.WAITING_MOVE_REMOTE;
 					emitter.publish({
 						key: emitterKey,
 						channel: "minesweeper/" + $scope.gameId + "/1",
 						ttl: 1200,
-						message: JSON.stringify({type: "ack"})
+						message: JSON.stringify({
+							type: "ack",
+							data: {	playerName: $scope.players[1].name}
+						})
 					});
 					$scope.$apply();
 					console.log("Beach received");
@@ -26,6 +30,7 @@ var gameController = function ($scope, guidGenerator, beachService) {
 			case "ack":
 				if ($scope.gameState == $scope.GAME_STATES.WAITING_SYNC && $scope.thisPlayerId == 0)
 				{
+					$scope.players[1].name = json.data.playerName;
 					$scope.gameState = $scope.GAME_STATES.WAITING_MOVE_LOCAL;
 					$scope.$apply();
 					console.log("ack received");
@@ -163,8 +168,10 @@ var gameController = function ($scope, guidGenerator, beachService) {
 				ttl: 3600,
 				message: JSON.stringify(
 				{
-					type: "beach",
-					data: $scope.beach
+					type: "hello",
+					data: {
+						beach: $scope.beach,
+						playerName: $scope.players[0].name}
 				})
 			});
 		
