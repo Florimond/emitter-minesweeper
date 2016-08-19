@@ -31,13 +31,13 @@
 
 										ng-show="!beach[$index][$parent.$index].covered"
 										 -->
-									<div ng-hide="beach[$index][$parent.$index].covered" class="tile" ng-class="beach[$index][$parent.$index].class">
-										<div ng-hide="beach[$index][$parent.$index].mine == true || beach[$index][$parent.$index].neighbouringMines == 0">
-											{{beach[$index][$parent.$index].neighbouringMines}}
+									<div ng-hide="beach.area[$index][$parent.$index].covered" class="tile" ng-class="beach.area[$index][$parent.$index].class">
+										<div ng-hide="beach.area[$index][$parent.$index].mine == true || beach.area[$index][$parent.$index].neighbouringMines == 0">
+											{{beach.area[$index][$parent.$index].neighbouringMines}}
 										</div>
 									</div>
 														 
-									<button ng-disabled="gameState != GAME_STATES.WAITING_MOVE_LOCAL" ng-show="beach[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
+									<button ng-disabled="gameState != GAME_STATES.WAITING_MOVE_LOCAL" ng-show="beach.area[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
 
 								</div>
 

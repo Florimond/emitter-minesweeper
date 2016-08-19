@@ -1,5 +1,5 @@
-var gameController = function ($scope, guidGenerator) {
-
+var gameController = function ($scope, guidGenerator, beachService) {
+	
 	
 	$scope.GAME_STATES =
 	{
@@ -57,43 +57,9 @@ var gameController = function ($scope, guidGenerator) {
 	$scope.playerScore = [0, 0];
 	var playerScore = $scope.playerScore;
 	var turns = 0;
-
-	$scope.beach = [];
 	
-	// TODO : service to manage the beach
-	// TODO : css class in a separate beach?
-	function initBeach()
-	{
-		for (var i = 0; i < 16; ++i) {
-			$scope.beach[i] = [];
-			for (var j = 0; j < 16; ++j) {
-				$scope.beach[i][j] = {
-					covered: true,
-					mine: false,
-					neighbouringMines: 0,
-					class: ''
-				};
-			}
-		}
-
-		var mines = 51;
-		do
-		{
-			var x = Math.floor(Math.random() * 15);
-			var y = Math.floor(Math.random() * 15);
-
-			if ($scope.beach[x][y].mine == false) {
-				--mines;
-				$scope.beach[x][y].mine = true;
-				incNeighbours(x, y);
-			}
-		}
-		while (mines);
-	}
-
-
 	$scope.getClass = function (x, y) {
-		var tile = $scope.beach[x][y];
+		var tile = $scope.beach.area[x][y];
 		if (tile.value)
 		{
 			return "mine mines" + tile.neighbouringMines;
@@ -101,46 +67,16 @@ var gameController = function ($scope, guidGenerator) {
 		return "";
 	};
 
-	function applyToNeighbours(x, y, f)
-	{
-		for (var xOffset = -1; xOffset < 2; ++xOffset) {
-			var newX = x + xOffset;
-			if (newX < 0) continue;
-			if (newX > 15) break;
-			for (var yOffset = -1; yOffset < 2; ++yOffset) {
-				var newY = y + yOffset;
-				if (newY < 0) continue;
-				if (newY > 15) break;
 
-				f(newX, newY);
-			}
-		}
-	}
 
-	function incNeighbours(x, y)
-	{
-		applyToNeighbours(x, y, function (x, y) {
-			++$scope.beach[x][y].neighbouringMines;
-		});
-	}
 
-	function explore(x, y)
-	{
-		applyToNeighbours(x, y, function (x, y) {
-			var tile = $scope.beach[x][y];
-			if (tile.covered && !tile.mine) {
-				tile.covered = false;
-				if (tile.neighbouringMines == 0) explore(x, y);
-			}
-		});
-	}
 
 	//
 	// TODO : migrate CSS concerns to other part
 	//
 	function discoverTile(x, y)
 	{
-		var tile = $scope.beach[x][y];
+		var tile = $scope.beach.area[x][y];
 		tile.covered = false;
 		if (tile.mine)
 		{
@@ -153,7 +89,7 @@ var gameController = function ($scope, guidGenerator) {
 			++turns;
 			if (tile.neighbouringMines == 0)
 			{
-				explore(x, y);
+				beachService.explore($scope.beach, x, y);
 			}
 			else
 			{
@@ -210,7 +146,7 @@ var gameController = function ($scope, guidGenerator) {
 	{
 		$scope.thisPlayerId = 0;
 		$scope.gameId = guidGenerator.getGuid();
-		initBeach();
+		$scope.beach = beachService.generateBeach(16, 16, 51);
 		
 		emitter.subscribe(
 		{
