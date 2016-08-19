@@ -7,23 +7,28 @@
 		<div>
 			<div style="margin-top: 10px">
 				<div style="float: left">
-					<div class="panel panel-danger" style=" width: 100px">
-						<div class="panel-heading" style="height: 250px">
+					<div class="panel panel-danger" style=" width: 150px">
+						<div class="panel-heading" style="height: 220px">
+							<img style="height: 50px" ng-show="turns % 2 == 0" src="images/Crystal_Clear_action_build.png"/>
 							{{players[0].name}}<br />
-							Score : {{playerScore[0]}}
+							<img style="height: 50px" src="images/Crystal_Clear_app_virus_detected.png"/ > {{players[0].score}}
 						</div>
 					</div>
-					<div class="panel panel-info" style=" width: 100px">
-						<div class="panel-heading" style="height: 250px">
+					<div style="height: 50px">
+						{{remainingMines}}
+					</div>
+					<div class="panel panel-info" style=" width: 150px">
+						<div class="panel-heading" style="height: 220px">
+							<img style="height: 50px"  ng-show="turns % 2 == 1" src="images/Crystal_Clear_action_build.png"/>
 							{{players[1].name}}<br />
-							Score : {{playerScore[1]}}
+							<img style="height: 45px" src="images/Crystal_Clear_app_virus_detected_2.png"/ > {{players[1].score}}
 						</div>
 					</div>
 				</div>
 
 				<div style="margin-left: 10px; padding: 10px;display: inline-block; border: dashed 3px red">
 
-						<div style="background-image:url('images/sand.jpg'); background-repeat:repeat;display:inline-block ">
+						<div style="display:inline-block ">
 							<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px">
 								<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="display: inline-block; width: 30px">
 									<!-- Do not specify any height...-->

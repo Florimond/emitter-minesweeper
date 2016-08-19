@@ -1,14 +1,5 @@
 var gameController = function ($scope, guidGenerator, beachService) {
-	$scope.GAME_STATES =
-	{
-		STOPPED: 0,
-		WAITING_SYNC: 1,
-		WAITING_MOVE_LOCAL: 2,
-		WAITING_MOVE_REMOTE: 3
-	};
-	$scope.gameState = $scope.GAME_STATES.STOPPED;
-	
-	
+
 	$scope.messageReceived = function(msg)
 	{
 		console.log('emitter: received ' + msg.asString() );
@@ -52,9 +43,7 @@ var gameController = function ($scope, guidGenerator, beachService) {
 	}
 	emitter.on('message', $scope.messageReceived);
 	
-	$scope.playerScore = [0, 0];
-	var playerScore = $scope.playerScore;
-	var turns = 0;
+	$scope.turns = 0;
 	
 	function classifyBeach (beach)
 	{
@@ -73,12 +62,11 @@ var gameController = function ($scope, guidGenerator, beachService) {
 
 	function checkForWinner()
 	{
-		var sum = $scope.playerScore[0] + $scope.playerScore[1];
-		var remaining = $scope.beach.mines - sum;
-		var delta = abs($scope.playerScore[0] - $scope.playerScore[1]);
-		if (delta > remaining)
+		var sum = $scope.players[0].score + $scope.players[1].score;
+		var delta = Math.abs($scope.players[0].score - $scope.players[1].score);
+		if (delta > $scope.remainingMines)
 		{
-			if ($scope.playerScore[$scope.thisPlayerId] > $scope.playerScore[($scope.thisPlayerId + 1) % 2])
+			if ($scope.players[$scope.thisPlayerId].score > $scope.players[$scope.opponentId].score)
 			{
 				alert("You WIN !");
 			}
@@ -95,14 +83,15 @@ var gameController = function ($scope, guidGenerator, beachService) {
 		tile.covered = false;
 		if (tile.mine)
 		{
-			var playerNumber = turns % 2;
-			++playerScore[playerNumber];
+			--$scope.remainingMines;
+			var playerNumber = $scope.turns % 2;
+			++$scope.players[playerNumber].score;
 			tile.class = "flag" + playerNumber;
 			checkForWinner();
 		}
 		else
 		{
-			++turns;
+			++$scope.turns;
 			if (tile.neighbouringMines == 0)
 			{
 				beachService.explore($scope.beach, x, y);
@@ -183,7 +172,16 @@ var gameController = function ($scope, guidGenerator, beachService) {
 	}
 
 	
-
+	$scope.GAME_STATES =
+	{
+		STOPPED: 0,
+		WAITING_SYNC: 1,
+		WAITING_MOVE_LOCAL: 2,
+		WAITING_MOVE_REMOTE: 3
+	};
+	$scope.remainingMines = 51;
+	$scope.gameState = $scope.GAME_STATES.STOPPED;
+	$scope.opponentId = ($scope.thisPlayerId + 1) % 2;
 	
 	if ($scope.thisPlayerId == 0)
 		$scope.startGame();
