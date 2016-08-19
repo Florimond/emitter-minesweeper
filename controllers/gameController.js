@@ -1,6 +1,4 @@
 var gameController = function ($scope, guidGenerator, beachService) {
-	
-	
 	$scope.GAME_STATES =
 	{
 		STOPPED: 0,
@@ -58,22 +56,22 @@ var gameController = function ($scope, guidGenerator, beachService) {
 	var playerScore = $scope.playerScore;
 	var turns = 0;
 	
-	$scope.getClass = function (x, y) {
-		var tile = $scope.beach.area[x][y];
-		if (tile.value)
+	function classifyBeach (beach)
+	{
+		for (var i = 0; i < beach.height; ++i)
 		{
-			return "mine mines" + tile.neighbouringMines;
+			for (var j = 0; j < beach.width; ++j)
+			{
+				var tile = $scope.beach.area[i][j];
+				if (tile.neighbouringMines)
+				{
+					tile.class = "mine mines" + tile.neighbouringMines;
+				}
+			}
 		}
-		return "";
 	};
 
 
-
-
-
-	//
-	// TODO : migrate CSS concerns to other part
-	//
 	function discoverTile(x, y)
 	{
 		var tile = $scope.beach.area[x][y];
@@ -90,10 +88,6 @@ var gameController = function ($scope, guidGenerator, beachService) {
 			if (tile.neighbouringMines == 0)
 			{
 				beachService.explore($scope.beach, x, y);
-			}
-			else
-			{
-				tile.class = "mine mines" + tile.neighbouringMines;
 			}
 		}
 		
@@ -147,6 +141,7 @@ var gameController = function ($scope, guidGenerator, beachService) {
 		$scope.thisPlayerId = 0;
 		$scope.gameId = guidGenerator.getGuid();
 		$scope.beach = beachService.generateBeach(16, 16, 51);
+		classifyBeach($scope.beach);
 		
 		emitter.subscribe(
 		{
