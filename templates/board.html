@@ -36,12 +36,8 @@
 							<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px">
 								<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="display: inline-block; width: 30px">
 									<!-- Do not specify any height...-->
-									<!-- ng-class="'mines'+beach[$parent.$index][$index].value"
-
-										ng-show="!beach[$index][$parent.$index].covered"
-										 -->
 									<div ng-hide="beach.area[$index][$parent.$index].covered" class="tile" ng-class="beach.area[$index][$parent.$index].class">
-										<div ng-hide="beach.area[$index][$parent.$index].mine == true || beach.area[$index][$parent.$index].neighbouringMines == 0">
+										<div ng-if="beach.area[$index][$parent.$index].mine == false && beach.area[$index][$parent.$index].neighbouringMines > 0">
 											{{::beach.area[$index][$parent.$index].neighbouringMines}}
 										</div>
 									</div>
