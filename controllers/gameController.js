@@ -67,7 +67,6 @@ var gameController = function ($scope, guidGenerator, beachService) {
 
 	function checkForWinner()
 	{
-		var sum = $scope.players[0].score + $scope.players[1].score;
 		var delta = Math.abs($scope.players[0].score - $scope.players[1].score);
 		if (delta > $scope.remainingMines)
 		{
@@ -112,11 +111,6 @@ var gameController = function ($scope, guidGenerator, beachService) {
 		if (!mineFound) $scope.gameState = $scope.GAME_STATES.WAITING_MOVE_LOCAL;
 	}
 	
-	/* TODO
-		This function use "local", "gameState", and "turn". Their meanings overlap !
-		Find a solution to switch GAME_STATES auto
-		+ Specialize this function.
-	*/
 	$scope.click = function (x, y) {
 		var mineFound = discoverTile(x, y);
 		if (!mineFound) $scope.gameState = $scope.GAME_STATES.WAITING_MOVE_REMOTE;
