@@ -1,0 +1,13 @@
+Generate the beach and the guid in the Start Game menu
+Display Guid in the Start Game menu, and wait for a "hello" from a slave
+Then share beach and name
+Then start the game
+
+Pour diminuer les watchers:
+
+Virer le ng-disabled -> le click ne doit simplement rien faire quand ce n'est pas le tour du gars qui clique
+Les numéros doivent aussi être des classes, du coup plus besoin ng-hide qui affiche le numéro
+
+Faire une maquette de ce à quoi ressembler la page principale
+
+?? keep alive??
