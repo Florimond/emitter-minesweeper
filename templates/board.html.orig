@@ -24,8 +24,13 @@
 							<div>
 							<img style="height: 50px"  ng-show="turns % 2 == 1" src="images/Crystal_Clear_action_build.png" />
 							</div>
+<<<<<<< Updated upstream
+							{{players[1].name}}<br />
+							<img style="height: 45px" src="images/Crystal_Clear_app_virus_detected_2.png"/ > {{players[1].score}}
+=======
 							{{::players[1].name}}<br />
 							<img style="height: 45px" src="images/Crystal_Clear_app_virus_detected_2.png" /> {{players[1].score}}
+>>>>>>> Stashed changes
 						</div>
 					</div>
 				</div>
@@ -37,7 +42,7 @@
 								<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="display: inline-block; width: 30px">
 									<!-- Do not specify any height...-->
 									<div ng-hide="beach.area[$index][$parent.$index].covered" class="tile" ng-class="beach.area[$index][$parent.$index].class">
-										<div ng-hide="beach.area[$index][$parent.$index].mine == true || beach.area[$index][$parent.$index].neighbouringMines == 0">
+										<div ng-if="beach.area[$index][$parent.$index].mine == false && beach.area[$index][$parent.$index].neighbouringMines > 0">
 											{{beach.area[$index][$parent.$index].neighbouringMines}}
 										</div>
 									</div>

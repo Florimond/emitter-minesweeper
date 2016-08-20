@@ -37,7 +37,7 @@ var beachService = function ()
 				for (var j = 0; j < height; ++j)
 				{
 					beach.area[i][j] = {
-						covered: false,
+						covered: true,
 						mine: false,
 						neighbouringMines: 0,
 					};

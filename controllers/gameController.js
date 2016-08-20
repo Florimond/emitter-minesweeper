@@ -111,7 +111,6 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 				{
 					tile.class = "mine mines" + tile.neighbouringMines;
 				}
-				console.log(tile.neighbouringMines + " | " + tile.class);
 			}
 		}
 	};
@@ -123,14 +122,14 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		$scope.beach = beachService.generateBeach(16, 16, 51);
 		classifyBeach();
 		
-		/*
+		
 		emitterService.subscribe($scope.gameId + "/1", $scope.messageReceived);
 		console.log("Subscribed to channel : minesweeper/" + $scope.gameId + "/1");
 		
 		emitterService.publish("hello",
 								{beach: $scope.beach, playerName: $scope.players[0].name},
 								$scope.gameId + "/0");
-		*/
+		
 		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
 	}
 
