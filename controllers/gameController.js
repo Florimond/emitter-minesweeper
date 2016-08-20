@@ -1,28 +1,18 @@
-var gameController = function ($scope, guidGenerator, beachService) {
+var gameController = function ($scope, guidGenerator, beachService, emitterService) {
 
 	$scope.messageReceived = function(msg)
 	{
-		console.log('emitter: received ' + msg.asString() );
-				
-		var json = JSON.parse(msg.binary);
+		console.log('emitter: received ' + msg.type );
 		
-		switch (json.type)
+		switch (msg.type)
 		{
 			case "hello":
 				if ($scope.gameState == $scope.GAME_STATES.WAITING_SYNC && $scope.thisPlayerId == 1)
 				{
-					$scope.beach = json.data.beach;
-					$scope.players[0].name = json.data.playerName;
+					$scope.beach = msg.data.beach;
+					$scope.players[0].name = msg.data.playerName;
 					$scope.gameState = $scope.GAME_STATES.WAITING_MOVE_REMOTE;
-					emitter.publish({
-						key: emitterKey,
-						channel: "minesweeper/" + $scope.gameId + "/1",
-						ttl: 1200,
-						message: JSON.stringify({
-							type: "ack",
-							data: {	playerName: $scope.players[1].name}
-						})
-					});
+					emitterService.publish("ack", {	playerName: $scope.players[1].name}, $scope.gameId + "/1");
 					$scope.$apply();
 					console.log("Beach received");
 				}
@@ -30,7 +20,7 @@ var gameController = function ($scope, guidGenerator, beachService) {
 			case "ack":
 				if ($scope.gameState == $scope.GAME_STATES.WAITING_SYNC && $scope.thisPlayerId == 0)
 				{
-					$scope.players[1].name = json.data.playerName;
+					$scope.players[1].name = msg.data.playerName;
 					$scope.gameState = $scope.GAME_STATES.WAITING_MOVE_LOCAL;
 					$scope.$apply();
 					console.log("ack received");
@@ -39,31 +29,15 @@ var gameController = function ($scope, guidGenerator, beachService) {
 			case "click":
 				if ($scope.gameState == $scope.GAME_STATES.WAITING_MOVE_REMOTE)
 				{
-					$scope.remoteClick(json.data.x, json.data.y);
+					$scope.remoteClick(msg.data.x, msg.data.y);
 					$scope.$apply();
 				}
 				break;
 		}
 		
 	}
-	emitter.on('message', $scope.messageReceived);
 	
 	$scope.turns = 0;
-	
-	function classifyBeach (beach)
-	{
-		for (var i = 0; i < beach.height; ++i)
-		{
-			for (var j = 0; j < beach.width; ++j)
-			{
-				var tile = $scope.beach.area[i][j];
-				if (tile.neighbouringMines)
-				{
-					tile.class = "mine mines" + tile.neighbouringMines;
-				}
-			}
-		}
-	};
 
 	function checkForWinner()
 	{
@@ -115,60 +89,48 @@ var gameController = function ($scope, guidGenerator, beachService) {
 		var mineFound = discoverTile(x, y);
 		if (!mineFound) $scope.gameState = $scope.GAME_STATES.WAITING_MOVE_REMOTE;
 	
-		emitter.publish({
-			key: emitterKey,
-			channel: "minesweeper/" + $scope.gameId + "/" + $scope.thisPlayerId,
-			ttl: 1200,
-			message: JSON.stringify({
-				type: 'click',
-				data: {
-				x: x,
-				y: y}
-			})
-		});
-		
+		emitterService.publish("click", {x: x, y: y}, $scope.gameId + "/" + $scope.thisPlayerId);	
 	};
 	
 	$scope.connectToGame = function()
 	{
 		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
 		$scope.thisPlayerId = 1;
-		emitter.subscribe(
-		{
-			key: emitterKey,
-			channel: "minesweeper/" + $scope.gameId + "/0",
-			last: 1
-		});
+		emitterService.subscribe($scope.gameId + "/0", $scope.messageReceived, 1);
 		console.log("Subscribed to channel : minesweeper/" + $scope.gameId + "/0");
 	}
+	
+	function classifyBeach()
+	{
+		for (var i = 0; i < $scope.beach.width; ++i)
+		{
+			for (var j = 0; j < $scope.beach.height; ++j)
+			{
+				var tile = $scope.beach.area[i][j];
+				if (tile.neighbouringMines)
+				{
+					tile.class = "mine mines" + tile.neighbouringMines;
+				}
+				console.log(tile.neighbouringMines + " | " + tile.class);
+			}
+		}
+	};
 	
 	$scope.startGame = function()
 	{
 		$scope.thisPlayerId = 0;
 		$scope.gameId = guidGenerator.getGuid();
 		$scope.beach = beachService.generateBeach(16, 16, 51);
-		classifyBeach($scope.beach);
+		classifyBeach();
 		
-		emitter.subscribe(
-		{
-			key: emitterKey,
-			channel: "minesweeper/" + $scope.gameId + "/1"
-		});
+		/*
+		emitterService.subscribe($scope.gameId + "/1", $scope.messageReceived);
 		console.log("Subscribed to channel : minesweeper/" + $scope.gameId + "/1");
 		
-		emitter.publish({
-				key: emitterKey,
-				channel: "minesweeper/" + $scope.gameId + "/0",
-				ttl: 3600,
-				message: JSON.stringify(
-				{
-					type: "hello",
-					data: {
-						beach: $scope.beach,
-						playerName: $scope.players[0].name}
-				})
-			});
-		
+		emitterService.publish("hello",
+								{beach: $scope.beach, playerName: $scope.players[0].name},
+								$scope.gameId + "/0");
+		*/
 		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
 	}
 

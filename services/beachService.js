@@ -24,7 +24,7 @@ var beachService = function ()
 	}
 	
     return	{
-        generateBeach: function (height, width, mines)	{
+        generateBeach: function (width, height, mines)	{
 			var beach = {
 				height: height,
 				width: width,
@@ -37,7 +37,7 @@ var beachService = function ()
 				for (var j = 0; j < height; ++j)
 				{
 					beach.area[i][j] = {
-						covered: true,
+						covered: false,
 						mine: false,
 						neighbouringMines: 0,
 					};
@@ -47,8 +47,8 @@ var beachService = function ()
 			var minesToDrop = mines;
 			do
 			{
-				var x = Math.floor(Math.random() * 15);
-				var y = Math.floor(Math.random() * 15);
+				var x = Math.floor(Math.random() * (width-1));
+				var y = Math.floor(Math.random() * (height-1));
 
 				if (beach.area[x][y].mine == false) {
 					--minesToDrop;
