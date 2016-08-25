@@ -1,25 +1,25 @@
 ﻿.flag0
 {
     background-repeat:no-repeat;
-    background-image: url(../images/redFlag.png);
-    background-size: 20px;
+    background-image: url(../images/redMine.png);
+    background-size: 28px;
 }
 
 
 .flag1
 {
     background-repeat:no-repeat;
-    background-image: url(../images/blueFlag.png);
-    background-size: 20px;
+    background-image: url(../images/greenMine.png);
+    background-size: 28px;
 }
 
 
 .tile
 {
     box-sizing: border-box;
-    height: 20px;
-    width: 20px;
-    margin: 0;
+    height: 28px;
+    width: 28px;
+    margin: auto;
     padding: 0;
     border: 0;
 }
@@ -65,4 +65,17 @@
 .mines8
 {
     color: gray;
+}
+
+/* http://ng.malsup.com/#!/css-animations-for-ng-hide_ng-show */
+.ng-hide-add, .ng-hide-remove {
+    /* ensure visibility during the transition */
+    display: block !important; /* yes, important */
+}
+.cssFade {
+    transition: 0.5s linear all;
+    opacity: 1;
+}
+.cssFade.ng-hide {
+    opacity: 0;
 }

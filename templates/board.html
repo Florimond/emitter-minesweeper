@@ -32,23 +32,23 @@
 
 				<div style="margin-left: 10px; padding: 10px;display: inline-block; border: dashed 3px red">
 
-						<div style="display:inline-block ">
-							<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px">
-								<div ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="display: inline-block; width: 30px">
+						<table>
+							<tr ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]">
+								<td ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px width: 30px;">
 									<!-- Do not specify any height...-->
 									<div ng-hide="beach.area[$index][$parent.$index].covered" class="tile" ng-class="beach.area[$index][$parent.$index].class">
-										<div ng-hide="beach.area[$index][$parent.$index].mine == true || beach.area[$index][$parent.$index].neighbouringMines == 0">
+										<div class="hatch" ng-hide="beach.area[$index][$parent.$index].mine == true || beach.area[$index][$parent.$index].neighbouringMines == 0">
 											{{beach.area[$index][$parent.$index].neighbouringMines}}
 										</div>
 									</div>
 														 
-									<button ng-disabled="gameState != GAME_STATES.WAITING_MOVE_LOCAL" ng-show="beach.area[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary" ng-model="singleModel"></button>
+									<button ng-disabled="gameState != GAME_STATES.WAITING_MOVE_LOCAL" ng-show="beach.area[$index][$parent.$index].covered" ng-click="click($index, $parent.$index)" style="height: 30px; width: 30px; box-sizing: border-box" type="button" class="btn btn-primary"></button>
 
-								</div>
+								</td>
 
-							</div>
+							</tr>
 
-						</div>
+						</table>
 
 				</div>
 			</div>

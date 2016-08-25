@@ -61,14 +61,17 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		tile.covered = false;
 		if (tile.mine)
 		{
+			mineHit.play();
 			--$scope.remainingMines;
 			var playerNumber = $scope.turns % 2;
 			++$scope.players[playerNumber].score;
-			tile.class = "flag" + playerNumber;
+			tile.class = "flag" + playerNumber + " expandOpen";
+			
 			checkForWinner();
 		}
 		else
 		{
+			mySound.play();
 			++$scope.turns;
 			if (tile.neighbouringMines == 0)
 			{
@@ -133,7 +136,9 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
 	}
 
-	
+
+	var mySound = new Audio("sounds/73560__stanestane__blip.wav");
+	var mineHit = new Audio("sounds/320905__suzenako__the-ding.wav");
 	$scope.GAME_STATES =
 	{
 		STOPPED: 0,
