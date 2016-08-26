@@ -61,7 +61,11 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		tile.covered = false;
 		if (tile.mine)
 		{
-			mineHit.play();
+			//if (mineHit.ended == false)
+				
+			mineHit.fastSeek(0);
+			//else
+				mineHit.play();
 			--$scope.remainingMines;
 			var playerNumber = $scope.turns % 2;
 			++$scope.players[playerNumber].score;
