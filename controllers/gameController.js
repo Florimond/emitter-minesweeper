@@ -33,6 +33,13 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 					$scope.$apply();
 				}
 				break;
+			case "hover":
+				if ($scope.gameState == $scope.GAME_STATES.WAITING_MOVE_REMOTE)
+				{
+					setHoverClass(msg.data.x, msg.data.y, $scope.opponentId);
+					$scope.$apply();
+				}
+				break;
 		}
 		
 	}
@@ -151,17 +158,19 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
 	}
 	
-	
+	function setHoverClass(x, y, playerId)
+	{
+		var previousHoveringTile = $scope.players[playerId].hovering;
+		$scope.players[playerId].hovering = {x : x, y : y};
+		if (previousHoveringTile) $scope.beach.area[previousHoveringTile.x][previousHoveringTile.y].hoveringClass = "";
+		
+		$scope.beach.area[x][y].hoveringClass = "hovering" + playerId;		
+	}
 	$scope.hovering = function(x, y)
 	{
 		if ($scope.gameState != $scope.GAME_STATES.WAITING_MOVE_LOCAL) return;
-		
-		var previousHoveringTile = $scope.players[$scope.thisPlayerId].hovering;
-		$scope.players[$scope.thisPlayerId].hovering = {x : x, y : y};
-		if (previousHoveringTile) $scope.beach.area[previousHoveringTile.x][previousHoveringTile.y].hoveringClass = "";
-		
-		$scope.beach.area[x][y].hoveringClass = "hovering" + $scope.thisPlayerId;
-		
+		setHoverClass(x, y, $scope.thisPlayerId);
+		emitterService.publish("hover", {x: x, y: y}, $scope.gameId + "/" + $scope.thisPlayerId)
 	};
 
 	
