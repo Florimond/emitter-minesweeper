@@ -63,7 +63,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		{
 			//if (mineHit.ended == false)
 				
-			mineHit.fastSeek(0);
+			//mineHit.fastSeek(0);
 			//else
 				mineHit.play();
 			--$scope.remainingMines;
