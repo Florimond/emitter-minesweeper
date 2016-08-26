@@ -139,7 +139,24 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		
 		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
 	}
+	
+	
+	$scope.hovering = function(x, y)
+	{
+		if ($scope.gameState == $scope.GAME_STATES.WAITING_MOVE_LOCAL)
+		{
+			var previousHoveringTile = $scope.players[$scope.thisPlayerId].hovering;
+			$scope.players[$scope.thisPlayerId].hovering = {x : x, y : y};
+			if (previousHoveringTile) $scope.beach.area[previousHoveringTile.x][previousHoveringTile.y].hoveringClass = "";
+			
+			$scope.beach.area[x][y].hoveringClass = "hovering" + $scope.thisPlayerId;
+		}
+		console.log("Hovering : " + x + ", " + y);
+	};
 
+	
+	//$scope.players[0].hovering = {};
+	//$scope.players[1].hovering = {};
 	var sounds = {
 		miss : new Audio("sounds/miss.wav"),
 	    mineHit : new Audio("sounds/mineHit.wav")
