@@ -7,7 +7,7 @@
 
 .hovering0
 {
-	border: 3px dashed red;
+	border: 3px dashed red !important;
 	border-radius: 4px
 }
 
@@ -20,19 +20,24 @@
 
 .hovering1
 {
-	border: 3px dashed greenyellow;
+	border: 3px dashed greenyellow !important;
 	border-radius: 4px
 }
 
 
 .tile
 {
+	background-color: #008CBA;
+	border-radius: 4px;
+	color: transparent;
+	/*
     box-sizing: border-box;
     height: 28px;
     width: 28px;
     margin: auto;
     padding: 0;
     border: 0;
+	*/
 }
 
 .mine
@@ -44,38 +49,53 @@
 
 .mines1
 {
-    color: blue;
+    /*color: blue;*/
+	background-image: url(../images/1.png);
 }
 
 .mines2
 {
     color: darkseagreen;
+	background-image: url(../images/2.png);
+
 }
 
 .mines3
 {
     color: red;
+	background-image: url(../images/3.png);
+
 }
 
 .mines4
 {
     color: darkblue;
+	background-image: url(../images/4.png);
+
 }
 .mines5
 {
     color: darkred;
+	background-image: url(../images/5.png);
+
 }
 .mines6
 {
     color: cadetblue;
+	background-image: url(../images/6.png);
+
 }
 .mines7
 {
     color: black;
+	background-image: url(../images/7.png);
+
 }
 .mines8
 {
     color: gray;
+	background-image: url(../images/8.png);
+
 }
 
 /* http://ng.malsup.com/#!/css-animations-for-ng-hide_ng-show */

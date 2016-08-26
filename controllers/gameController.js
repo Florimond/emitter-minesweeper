@@ -82,7 +82,6 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 				beachService.explore($scope.beach, x, y);
 			}
 		}
-		
 		return tile.mine;
 	}
 	
@@ -92,7 +91,9 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		if (!mineFound) $scope.gameState = $scope.GAME_STATES.WAITING_MOVE_LOCAL;
 	}
 	
-	$scope.click = function (x, y) {
+	$scope.click = function (x, y) 
+	{
+		if ($scope.gameState != $scope.GAME_STATES.WAITING_MOVE_LOCAL) return;
 		var mineFound = discoverTile(x, y);
 		if (!mineFound) $scope.gameState = $scope.GAME_STATES.WAITING_MOVE_REMOTE;
 	
@@ -107,6 +108,16 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		console.log("Subscribed to channel : minesweeper/" + $scope.gameId + "/0");
 	}
 	
+	$scope.getTileClass = function(x, y)
+	{
+		if (!$scope.beach) return;
+		var hovering = $scope.beach.area[x][y].hoveringClass;
+		if ($scope.beach.area[x][y].covered)
+			return "btn btn-primary " + hovering ;
+		else 
+			return $scope.beach.area[x][y].class + " " + hovering;
+	};
+	
 	function classifyBeach()
 	{
 		for (var i = 0; i < $scope.beach.width; ++i)
@@ -120,7 +131,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 				}
 			}
 		}
-	};
+	}
 	
 	$scope.startGame = function()
 	{
@@ -143,15 +154,14 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	
 	$scope.hovering = function(x, y)
 	{
-		if ($scope.gameState == $scope.GAME_STATES.WAITING_MOVE_LOCAL)
-		{
-			var previousHoveringTile = $scope.players[$scope.thisPlayerId].hovering;
-			$scope.players[$scope.thisPlayerId].hovering = {x : x, y : y};
-			if (previousHoveringTile) $scope.beach.area[previousHoveringTile.x][previousHoveringTile.y].hoveringClass = "";
-			
-			$scope.beach.area[x][y].hoveringClass = "hovering" + $scope.thisPlayerId;
-		}
-		console.log("Hovering : " + x + ", " + y);
+		if ($scope.gameState != $scope.GAME_STATES.WAITING_MOVE_LOCAL) return;
+		
+		var previousHoveringTile = $scope.players[$scope.thisPlayerId].hovering;
+		$scope.players[$scope.thisPlayerId].hovering = {x : x, y : y};
+		if (previousHoveringTile) $scope.beach.area[previousHoveringTile.x][previousHoveringTile.y].hoveringClass = "";
+		
+		$scope.beach.area[x][y].hoveringClass = "hovering" + $scope.thisPlayerId;
+		
 	};
 
 	
