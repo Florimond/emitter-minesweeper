@@ -65,7 +65,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 				
 			//mineHit.fastSeek(0);
 			//else
-				mineHit.play();
+			sounds.mineHit.play();
 			--$scope.remainingMines;
 			var playerNumber = $scope.turns % 2;
 			++$scope.players[playerNumber].score;
@@ -75,7 +75,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		}
 		else
 		{
-			mySound.play();
+			sounds.miss.play();
 			++$scope.turns;
 			if (tile.neighbouringMines == 0)
 			{
@@ -140,9 +140,11 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
 	}
 
-
-	var mySound = new Audio("sounds/73560__stanestane__blip.wav");
-	var mineHit = new Audio("sounds/320905__suzenako__the-ding.wav");
+	var sounds = {
+		miss : new Audio("sounds/miss.wav"),
+	    mineHit : new Audio("sounds/mineHit.wav")
+		
+	};
 	$scope.GAME_STATES =
 	{
 		STOPPED: 0,
