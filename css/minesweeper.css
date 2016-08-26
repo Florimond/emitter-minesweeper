@@ -5,12 +5,23 @@
     background-size: 28px;
 }
 
+.hovering0
+{
+	border: 3px dashed red;
+	border-radius: 4px
+}
 
 .flag1
 {
     background-repeat:no-repeat;
     background-image: url(../images/greenMine.png);
     background-size: 28px;
+}
+
+.hovering1
+{
+	border: 3px dashed greenyellow;
+	border-radius: 4px
 }
 
 
