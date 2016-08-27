@@ -43,8 +43,6 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		}
 		
 	}
-	
-	$scope.turns = 0;
 
 	function checkForWinner()
 	{
@@ -142,7 +140,6 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	
 	$scope.startGame = function()
 	{
-		$scope.thisPlayerId = 0;
 		$scope.gameId = guidGenerator.getGuid();
 		$scope.beach = beachService.generateBeach(16, 16, 51);
 		classifyBeach();
@@ -173,9 +170,6 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		emitterService.publish("hover", {x: x, y: y}, $scope.gameId + "/" + $scope.thisPlayerId)
 	};
 
-	
-	//$scope.players[0].hovering = {};
-	//$scope.players[1].hovering = {};
 	var sounds = {
 		miss : new Audio("sounds/miss.wav"),
 	    mineHit : new Audio("sounds/mineHit.wav")
@@ -188,6 +182,8 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		WAITING_MOVE_LOCAL: 2,
 		WAITING_MOVE_REMOTE: 3
 	};
+	
+	$scope.turns = 0;
 	$scope.remainingMines = 51;
 	$scope.gameState = $scope.GAME_STATES.STOPPED;
 	$scope.opponentId = ($scope.thisPlayerId + 1) % 2;
