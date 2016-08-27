@@ -3,6 +3,7 @@
     background-repeat:no-repeat;
     background-image: url(../images/redMine.png);
     background-size: 28px;
+	background-position: center center;
 }
 
 .hovering0
@@ -16,6 +17,7 @@
     background-repeat:no-repeat;
     background-image: url(../images/greenMine.png);
     background-size: 28px;
+	background-position: center center;
 }
 
 .hovering1
@@ -42,9 +44,9 @@
 
 .mine
 {
-    font-weight: bold;
-    font-size: 17px;
-    text-align: center;
+	background-size: 18px 18px;
+	background-repeat: no-repeat;
+	background-position: center center;
 }
 
 .mines1
