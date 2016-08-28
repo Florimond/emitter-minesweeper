@@ -29,7 +29,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 			case "click":
 				if ($scope.game.state == GAME_STATES.WAITING_MOVE_REMOTE)
 				{
-					var mineFound = discoverTile(msg.data.x, msg.data.y);
+					var mineFound = discoverTile(msg.data.x, msg.data.y, opponent);
 					if (!mineFound) $scope.game.state = GAME_STATES.WAITING_MOVE_LOCAL;
 					$scope.$apply();
 				}
@@ -62,7 +62,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	}
 
 	// Called both when a tile was clicked locally and when a click was received from the opponent.
-	function discoverTile(x, y)
+	function discoverTile(x, y, player)
 	{
 		var tile = $scope.game.beach.area[x][y];
 		tile.covered = false;
@@ -70,10 +70,8 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		{
 			sounds.mineHit.play();
 			--$scope.game.remainingMines;
-			var playerId = $scope.game.turns % 2;
-			++$scope.players[playerId].score;
-			tile.class = "flag" + playerId + " expandOpen";
-			
+			++player.score;
+			tile.class = "flag" + player.id + " expandOpen";
 			checkForWinner();
 		}
 		else
@@ -92,10 +90,9 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	$scope.click = function (x, y) 
 	{
 		if ($scope.game.state != GAME_STATES.WAITING_MOVE_LOCAL) return;
-		var mineFound = discoverTile(x, y);
+		emitterService.publish("click", {x: x, y: y}, $scope.game.id + "/" + thisPlayer.id);
+		var mineFound = discoverTile(x, y, thisPlayer);
 		if (!mineFound) $scope.game.state = GAME_STATES.WAITING_MOVE_REMOTE;
-	
-		emitterService.publish("click", {x: x, y: y}, $scope.game.id + "/" + thisPlayer.id);	
 	};
 	
 	/* 
