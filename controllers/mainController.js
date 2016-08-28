@@ -1,12 +1,6 @@
-var mainController = function ($scope)
+var mainController = function ($scope, newGameInfo)
 {	
-	$scope.players = [
-	{name: "Player 1",
-	score:0},
-	{name: "Player 2",
-	score:0}
-	];
-	
+	$scope.newGameInfo = newGameInfo;
 	$scope.view = "templates/menu.html";
 	$scope.startGameMenu = function()
 	{
@@ -18,13 +12,14 @@ var mainController = function ($scope)
 	};
 	$scope.startGame = function()
 	{
-		$scope.thisPlayerId = 0;
+		newGameInfo.playerId = 0;
 		$scope.view = "templates/board.html";
 	}
 
 	$scope.connectToGame = function() 
 	{
-		$scope.thisPlayerId = 1;
+		newGameInfo.playerId = 1;
 		$scope.view = "templates/board.html";
 	};
+	
 };

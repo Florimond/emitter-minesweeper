@@ -1,42 +1,43 @@
-var gameController = function ($scope, guidGenerator, beachService, emitterService) {
+var gameController = function ($scope, guidGenerator, beachService, emitterService, newGameInfo) {
 
-	$scope.messageReceived = function(msg)
+	function messageReceived(msg)
 	{
 		console.log('emitter: received ' + msg.type );
 		
 		switch (msg.type)
 		{
 			case "hello":
-				if ($scope.gameState == $scope.GAME_STATES.WAITING_SYNC && $scope.thisPlayerId == 1)
+				if ($scope.game.state == GAME_STATES.WAITING_SYNC && thisPlayer.isMaster == false)
 				{
-					$scope.beach = msg.data.beach;
-					$scope.players[0].name = msg.data.playerName;
-					$scope.gameState = $scope.GAME_STATES.WAITING_MOVE_REMOTE;
-					emitterService.publish("ack", {	playerName: $scope.players[1].name}, $scope.gameId + "/1");
+					$scope.game.beach = msg.data.beach;
+					opponent.name = msg.data.playerName;
+					$scope.game.state = GAME_STATES.WAITING_MOVE_REMOTE;
+					emitterService.publish("ack", {	playerName: thisPlayer.name}, $scope.game.id + "/1");
 					$scope.$apply();
 					console.log("Beach received");
 				}
 				break;
 			case "ack":
-				if ($scope.gameState == $scope.GAME_STATES.WAITING_SYNC && $scope.thisPlayerId == 0)
+				if ($scope.game.state == GAME_STATES.WAITING_SYNC && thisPlayer.isMaster)
 				{
-					$scope.players[1].name = msg.data.playerName;
-					$scope.gameState = $scope.GAME_STATES.WAITING_MOVE_LOCAL;
+					opponent.name = msg.data.playerName;
+					$scope.game.state = GAME_STATES.WAITING_MOVE_LOCAL;
 					$scope.$apply();
 					console.log("ack received");
 				}
 				break;
 			case "click":
-				if ($scope.gameState == $scope.GAME_STATES.WAITING_MOVE_REMOTE)
+				if ($scope.game.state == GAME_STATES.WAITING_MOVE_REMOTE)
 				{
-					$scope.remoteClick(msg.data.x, msg.data.y);
+					var mineFound = discoverTile(msg.data.x, msg.data.y);
+					if (!mineFound) $scope.game.state = GAME_STATES.WAITING_MOVE_LOCAL;
 					$scope.$apply();
 				}
 				break;
 			case "hover":
-				if ($scope.gameState == $scope.GAME_STATES.WAITING_MOVE_REMOTE)
+				if ($scope.game.state == GAME_STATES.WAITING_MOVE_REMOTE)
 				{
-					setHoverClass(msg.data.x, msg.data.y, $scope.opponentId);
+					setHoverClass(msg.data.x, msg.data.y, opponent);
 					$scope.$apply();
 				}
 				break;
@@ -46,10 +47,10 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 
 	function checkForWinner()
 	{
-		var delta = Math.abs($scope.players[0].score - $scope.players[1].score);
-		if (delta > $scope.remainingMines)
+		var delta = Math.abs(thisPlayer.score - opponent.score);
+		if (delta > $scope.game.remainingMines)
 		{
-			if ($scope.players[$scope.thisPlayerId].score > $scope.players[$scope.opponentId].score)
+			if (thisPlayer.score > opponent.score)
 			{
 				alert("You WIN !");
 			}
@@ -60,121 +61,129 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		}
 	}
 
+	// Called both when a tile was clicked locally and when a click was received from the opponent.
 	function discoverTile(x, y)
 	{
-		var tile = $scope.beach.area[x][y];
+		var tile = $scope.game.beach.area[x][y];
 		tile.covered = false;
 		if (tile.mine)
 		{
-			//if (mineHit.ended == false)
-				
-			//mineHit.fastSeek(0);
-			//else
 			sounds.mineHit.play();
-			--$scope.remainingMines;
-			var playerNumber = $scope.turns % 2;
-			++$scope.players[playerNumber].score;
-			tile.class = "flag" + playerNumber + " expandOpen";
+			--$scope.game.remainingMines;
+			var playerId = $scope.game.turns % 2;
+			++$scope.players[playerId].score;
+			tile.class = "flag" + playerId + " expandOpen";
 			
 			checkForWinner();
 		}
 		else
 		{
 			sounds.miss.play();
-			++$scope.turns;
+			++$scope.game.turns;
 			if (tile.neighbouringMines == 0)
 			{
-				beachService.explore($scope.beach, x, y);
+				beachService.explore($scope.game.beach, x, y);
 			}
 		}
 		return tile.mine;
 	}
-	
-	$scope.remoteClick = function(x, y)
-	{
-		var mineFound = discoverTile(x, y);
-		if (!mineFound) $scope.gameState = $scope.GAME_STATES.WAITING_MOVE_LOCAL;
-	}
-	
+		
+	// Called by ng-click on every tile.
 	$scope.click = function (x, y) 
 	{
-		if ($scope.gameState != $scope.GAME_STATES.WAITING_MOVE_LOCAL) return;
+		if ($scope.game.state != GAME_STATES.WAITING_MOVE_LOCAL) return;
 		var mineFound = discoverTile(x, y);
-		if (!mineFound) $scope.gameState = $scope.GAME_STATES.WAITING_MOVE_REMOTE;
+		if (!mineFound) $scope.game.state = GAME_STATES.WAITING_MOVE_REMOTE;
 	
-		emitterService.publish("click", {x: x, y: y}, $scope.gameId + "/" + $scope.thisPlayerId);	
+		emitterService.publish("click", {x: x, y: y}, $scope.game.id + "/" + thisPlayer.id);	
 	};
 	
-	$scope.connectToGame = function()
-	{
-		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
-		$scope.thisPlayerId = 1;
-		emitterService.subscribe($scope.gameId + "/0", $scope.messageReceived, 1);
-		console.log("Subscribed to channel : minesweeper/" + $scope.gameId + "/0");
-	}
-	
+	/* 
+	   Called by ng-class on every tile.
+	   This function chooses the classes to apply to a tile depending on whether it has been explored and
+	   whether any player is hovering it.
+	 */
 	$scope.getTileClass = function(x, y)
 	{
-		if (!$scope.beach) return;
-		var hovering = $scope.beach.area[x][y].hoveringClass;
-		if ($scope.beach.area[x][y].covered)
-			return "btn btn-primary " + hovering ;
-		else 
-			return $scope.beach.area[x][y].class + " " + hovering;
+		if (!$scope.game.beach) return;
+		var tile = $scope.game.beach.area[x][y];
+		
+		if (tile.covered)
+			return "btn btn-primary " + tile.hoveringClass;
+
+		return tile.class + " " + tile.hoveringClass;
 	};
 	
-	function classifyBeach()
+	// Change the tile the player is hovering.
+	function setHoverClass(x, y, player)
 	{
-		for (var i = 0; i < $scope.beach.width; ++i)
+		var previousHoveringTile = player.hovering;
+		player.hovering = {x : x, y : y};
+		if (previousHoveringTile) $scope.game.beach.area[previousHoveringTile.x][previousHoveringTile.y].hoveringClass = "";
+		
+		$scope.game.beach.area[x][y].hoveringClass = "hovering" + player.id;		
+	}
+	
+	// When the mouse is hovering a tile (ng-mouseover)...
+	$scope.hovering = function(x, y)
+	{
+		if ($scope.game.state != GAME_STATES.WAITING_MOVE_LOCAL) return;
+		setHoverClass(x, y, thisPlayer);
+		emitterService.publish("hover", {x: x, y: y}, $scope.game.id + "/" + thisPlayer.id)
+	};
+	
+	// Choose a css class for every tile.
+	function classifyBeach(beach)
+	{
+		for (var i = 0; i < beach.width; ++i)
 		{
-			for (var j = 0; j < $scope.beach.height; ++j)
+			for (var j = 0; j < beach.height; ++j)
 			{
-				var tile = $scope.beach.area[i][j];
+				var tile = beach.area[i][j];
 				if (tile.neighbouringMines)
 				{
 					tile.class = "mine mines" + tile.neighbouringMines;
 				}
 			}
 		}
-	}
+}
 	
-	$scope.startGame = function()
+	// Connect to an existing game
+	function connectToGame()
 	{
-		$scope.gameId = guidGenerator.getGuid();
-		$scope.beach = beachService.generateBeach(16, 16, 51);
-		classifyBeach();
-		
-		
-		emitterService.subscribe($scope.gameId + "/1", $scope.messageReceived);
-		console.log("Subscribed to channel : minesweeper/" + $scope.gameId + "/1");
-		
-		emitterService.publish("hello",
-								{beach: $scope.beach, playerName: $scope.players[0].name},
-								$scope.gameId + "/0");
-		
-		$scope.gameState = $scope.GAME_STATES.WAITING_SYNC;
+		$scope.game.id = newGameInfo.gameToConnect;
+		$scope.game.state = GAME_STATES.WAITING_SYNC;
+		// Subscribe to the opponent's channel.
+		emitterService.subscribe($scope.game.id + "/0", messageReceived, 1);
 	}
-	
-	function setHoverClass(x, y, playerId)
-	{
-		var previousHoveringTile = $scope.players[playerId].hovering;
-		$scope.players[playerId].hovering = {x : x, y : y};
-		if (previousHoveringTile) $scope.beach.area[previousHoveringTile.x][previousHoveringTile.y].hoveringClass = "";
-		
-		$scope.beach.area[x][y].hoveringClass = "hovering" + playerId;		
-	}
-	$scope.hovering = function(x, y)
-	{
-		if ($scope.gameState != $scope.GAME_STATES.WAITING_MOVE_LOCAL) return;
-		setHoverClass(x, y, $scope.thisPlayerId);
-		emitterService.publish("hover", {x: x, y: y}, $scope.gameId + "/" + $scope.thisPlayerId)
-	};
 
+	// Initialize a new game
+	function startGame(beachWidth, beachHeight, numberOfMines)
+	{
+		$scope.game.id = guidGenerator.getGuid();
+		$scope.game.beach = beachService.generateBeach(beachWidth, beachHeight, numberOfMines);	
+		classifyBeach($scope.game.beach);
+		// Subscribe to the opponent's channel.
+		emitterService.subscribe($scope.game.id + "/1", messageReceived);
+		// Let's publish a hello message with our newly generated beach and our nickname.
+		emitterService.publish("hello",
+								{beach: $scope.game.beach, playerName: thisPlayer.name},
+								$scope.game.id + "/0");
+		// Waiting for an opponent get our data and respond.
+		$scope.game.state = GAME_STATES.WAITING_SYNC;
+	}
+	
+	/////////////////////////////////////
+	// Initializations
+	/////////////////////////////////////
+	
+	// Loading sounds
 	var sounds = {
 		miss : new Audio("sounds/miss.wav"),
 	    mineHit : new Audio("sounds/mineHit.wav")
-		
 	};
+	
+	// Declaring constants
 	$scope.GAME_STATES =
 	{
 		STOPPED: 0,
@@ -182,15 +191,30 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		WAITING_MOVE_LOCAL: 2,
 		WAITING_MOVE_REMOTE: 3
 	};
+	var GAME_STATES = $scope.GAME_STATES;
 	
-	$scope.turns = 0;
-	$scope.remainingMines = 51;
-	$scope.gameState = $scope.GAME_STATES.STOPPED;
-	$scope.opponentId = ($scope.thisPlayerId + 1) % 2;
+	// Initializing the game variables
+	$scope.game = {
+		id: undefined,
+		state: GAME_STATES.STOPPED,
+		turns: 0,
+		remainingMines: 51,
+		beach: undefined
+	};
 	
-	if ($scope.thisPlayerId == 0)
-		$scope.startGame();
+	// Initializing the players
+	// I find it useful to be able to refers the players both through an array and by a meaningful name...
+	$scope.players = [
+		{id: 0, name: "Player 1", score:0, isMaster: true},
+		{id: 1, name: "Player 2", score:0, isMaster: false}
+	];
+	var thisPlayer = $scope.players[newGameInfo.playerId];
+	var opponent = $scope.players[newGameInfo.getOpponentId()];
+	thisPlayer.name = newGameInfo.playerNickname;
+	
+	if (thisPlayer.isMaster)
+		startGame(16, 16, 51);
 	else
-		$scope.connectToGame();
+		connectToGame();
 	
 };
