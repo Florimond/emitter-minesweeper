@@ -1,45 +1,42 @@
-    <div ng-controller="gameController">
-		<div>
-			<label for="gameNumber">Game number</label>
-			<input readonly="" class="form-control input-md" id="gameNumber" type="text" ng-model="game.id" style="width: 300px; display: inline-block"></input>
-			
-		</div>
-		<div>
-			<div style="margin-top: 10px">
-				<div style="float: left">
-					<div class="panel panel-danger" style=" width: 150px">
-						<div class="panel-heading" style="height: 220px">
-							<div>
-							<img style="height: 50px" ng-show="turns % 2 == 0" src="images/Crystal_Clear_action_build.png"/>
-							</div>
-							{{players[0].name}}<br />
-							<img style="height: 50px" src="images/redMine.png" /> {{players[0].score}}
-						</div>
-					</div>
-					<div style="height: 50px">
-						{{remainingMines}}
-					</div>
-					<div class="panel panel-info" style=" width: 150px">
-						<div class="panel-heading" style="height: 220px">
-							<div>
-							<img style="height: 50px"  ng-show="turns % 2 == 1" src="images/Crystal_Clear_action_build.png" />
-							</div>
-							{{::players[1].name}}<br />
-							<img style="height: 45px" src="images/greenMine.png" /> {{players[1].score}}
-						</div>
-					</div>
+<div ng-controller="gameController" style="margin-left: 10px">
+	<div style="margin-top: 10px">
+		<div class="score-board">
+			<div class="player-score player1">
+				<div class="player-name">
+					{{players[0].name}}
 				</div>
-
-				<div style="margin-left: 10px; padding: 10px;display: inline-block; border: dashed 3px red">
-
-					<table>
-						<tr ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]">
-							<td ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px width: 30px;">
-								<div ng-class="getTileClass($index, $parent.$index)"  ng-click="click($index, $parent.$index)" ng-mouseover="hovering($index, $parent.$index)" style="height: 30px; width: 30px;"></div>									
-							</td>
-						</tr>
-					</table>
+				<div class="score">
+					<img style="height: 40px" src="images/redMine.png" /> {{players[0].score}}
+				</div>
+			</div>
+			<div class="remaining-mines">
+				{{game.remainingMines}}
+			</div>
+			<div class="player-score player2">
+				<div class="player-name">
+					{{players[1].name}}
+				</div>
+				<div class="score">
+					<img style="height: 40px" src="images/greenMine.png" /> {{players[1].score}}
 				</div>
 			</div>
 		</div>
+
+	
+		<div style="padding: 10px;display: inline-block; border: dashed 3px red">				
+			<table>
+				<tr ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]">
+					<td ng-repeat="i in [1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16]" style="height: 30px width: 30px;">
+						<div ng-class="getTileClass($index, $parent.$index)"  ng-click="click($index, $parent.$index)" ng-mouseover="hovering($index, $parent.$index)" style="height: 30px; width: 30px;"></div>									
+					</td>
+				</tr>
+			</table>
+		</div>
 	</div>
+
+	<div>
+		<label for="gameNumber">Game number</label>
+		<input readonly="" class="form-control input-sm" id="gameNumber" type="text" ng-model="game.id" style="width: 300px; display: inline-block"></input>		
+	</div>
+
+</div>
