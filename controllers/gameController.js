@@ -6,6 +6,8 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		
 		switch (msg.type)
 		{
+			/* The "master" start the game by publishing in its channel a message containing the players' nickname
+			   and the beach it generated. It then waits for a second player to acknoledge. */
 			case "hello":
 				if ($scope.game.state == GAME_STATES.WAITING_SYNC && thisPlayer.isMaster == false)
 				{
@@ -17,6 +19,8 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 					console.log("Beach received");
 				}
 				break;
+			/* The "slave" received the hello message from the master. It answers by publishing in its own channel
+			   an "ack" message, with the nickname of the opponent. */
 			case "ack":
 				if ($scope.game.state == GAME_STATES.WAITING_SYNC && thisPlayer.isMaster)
 				{
@@ -26,6 +30,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 					console.log("ack received");
 				}
 				break;
+			/* The opponent sent a "click" message. Did he hit a mine? Let's see... */	
 			case "click":
 				if ($scope.game.state == GAME_STATES.WAITING_MOVE_REMOTE)
 				{
@@ -34,6 +39,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 					$scope.$apply();
 				}
 				break;
+			/* The opponent moved the mouse cursor over some area, let's keep track of his movements... */
 			case "hover":
 				if ($scope.game.state == GAME_STATES.WAITING_MOVE_REMOTE)
 				{
