@@ -1,7 +1,11 @@
 var emitterService = function (emitterKey, baseChannel)
 {
-	var emitter = window.emitter.connect({	secure: true });	
+	var emitter = null;	
 	return	{
+		connect: function(connectionHandler){
+			emitter = window.emitter.connect({secure: true });
+			emitter.on("connect", connectionHandler);
+		},
 		subscribe: function(channel, handler, last=0) {
 			defaultHandler = handler;
 			emitter.subscribe({
@@ -9,7 +13,7 @@ var emitterService = function (emitterKey, baseChannel)
 				channel: baseChannel + "/" + channel,
 				last});
 			emitter.on("message", function(msg) {handler(msg.asObject());});
-			},
+		},
 		publish: function(type, data, channel) {
 			emitter.publish({
 				key: emitterKey,
