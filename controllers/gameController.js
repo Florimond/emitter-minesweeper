@@ -4,30 +4,49 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	{
 		console.log('emitter: received ' + msg.type );
 		
+		/* BEST EFFORT ORDER mais pas garanti. DONC
+		On ne peut pas démarrer le jeu dès qu'on a envoyé la beach. Car on ne peut pas être sûr de l'ordre dans lequel les messages
+		vont être reçu. Il est possible que le slave drop le premier click du master parce qu'il n'aura pas encore reçu la beach
+		Le slave doit indiquer explicitement qu'il est ready avant que le master ne permette de démarrer la partie.
+*/		
 		switch (msg.type)
 		{
-			/* The "master" start the game by publishing in its channel a message containing the players' nickname
-			   and the beach it generated. It then waits for a second player to acknoledge. */
-			case "hello":
-				if ($scope.game.state == GAME_STATES.WAITING_SYNC && thisPlayer.isMaster == false)
+			case "init":
+				console.log("init");
+				if ($scope.game.state == GAME_STATES.WAITING_SYNC && thisPlayer.isMaster == true)
 				{
-					$scope.game.beach = msg.data.beach;
+					console.log("init in");
 					opponent.name = msg.data.playerName;
-					$scope.game.state = GAME_STATES.WAITING_MOVE_REMOTE;
-					emitterService.publish("ack", {	playerName: thisPlayer.name}, $scope.game.id + "/1");
-					$scope.$apply();
-					console.log("Beach received");
+					// Let's send back some greetings with the generated beach.
+					emitterService.publish(
+						"beach",
+						{beach: $scope.game.beach, playerName: thisPlayer.name},
+						$scope.game.id + "/0");
+					$scope.$apply();	// necessary??????					
 				}
 				break;
-			/* The "slave" received the hello message from the master. It answers by publishing in its own channel
-			   an "ack" message, with the nickname of the opponent. */
-			case "ack":
-				if ($scope.game.state == GAME_STATES.WAITING_SYNC && thisPlayer.isMaster)
+			case "beach":
+				console.log("beach");
+				if ($scope.game.state == GAME_STATES.WAITING_SYNC && thisPlayer.isMaster == false)
 				{
+					console.log("beach in");
+					$scope.game.beach = msg.data.beach;
 					opponent.name = msg.data.playerName;
-					$scope.game.state = GAME_STATES.WAITING_MOVE_LOCAL;
+					
+					// Let's indicate to the master that we are ready to start.
+					$scope.game.state = GAME_STATES.WAITING_MOVE_REMOTE;
+					emitterService.publish("ready", null, $scope.game.id + "/1");
 					$scope.$apply();
-					console.log("ack received");
+					console.log("Beach received, ready!");
+				}
+				break;
+			case "ready":
+				console.log("ready");
+				// The slave has received the beach and indicated that he was ready to start.
+				if ($scope.game.state == GAME_STATES.WAITING_SYNC && thisPlayer.isMaster == true)
+				{
+					console.log("ready in");
+					$scope.game.state = GAME_STATES.WAITING_MOVE_LOCAL;
 				}
 				break;
 			/* The opponent sent a "click" message. Did he hit a mine? Let's see... */	
@@ -157,7 +176,8 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		$scope.game.id = newGameInfo.gameToConnect;
 		$scope.game.state = GAME_STATES.WAITING_SYNC;
 		// Subscribe to the opponent's channel.
-		emitterService.subscribe($scope.game.id + "/0", messageReceived, 1);
+		emitterService.subscribe($scope.game.id + "/0", messageReceived);
+		emitterService.publish("init", {playerName: thisPlayer.name}, $scope.game.id + "/1");
 	}
 
 	// Initialize a new game
@@ -168,11 +188,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		classifyBeach($scope.game.beach);
 		// Subscribe to the opponent's channel.
 		emitterService.subscribe($scope.game.id + "/1", messageReceived);
-		// Let's publish a hello message with our newly generated beach and our nickname.
-		emitterService.publish("hello",
-								{beach: $scope.game.beach, playerName: thisPlayer.name},
-								$scope.game.id + "/0");
-		// Waiting for an opponent get our data and respond.
+		// Waiting for an opponent to send a hello message with his name.
 		$scope.game.state = GAME_STATES.WAITING_SYNC;
 	}
 	
