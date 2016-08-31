@@ -3,12 +3,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	function messageReceived(msg)
 	{
 		console.log('emitter: received ' + msg.type );
-		
-		/* BEST EFFORT ORDER mais pas garanti. DONC
-		On ne peut pas démarrer le jeu dès qu'on a envoyé la beach. Car on ne peut pas être sûr de l'ordre dans lequel les messages
-		vont être reçu. Il est possible que le slave drop le premier click du master parce qu'il n'aura pas encore reçu la beach
-		Le slave doit indiquer explicitement qu'il est ready avant que le master ne permette de démarrer la partie.
-*/		
+	
 		switch (msg.type)
 		{
 			case "init":
@@ -21,8 +16,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 					emitterService.publish(
 						"beach",
 						{beach: $scope.game.beach, playerName: thisPlayer.name},
-						$scope.game.id + "/0");
-					$scope.$apply();	// necessary??????					
+						$scope.game.id + "/0");				
 				}
 				break;
 			case "beach":
