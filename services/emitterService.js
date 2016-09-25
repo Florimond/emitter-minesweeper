@@ -3,7 +3,7 @@ var emitterService = function (emitterKey, baseChannel)
 	var emitter = null;	
 	return	{
 		connect: function(connectionHandler){
-			emitter = window.emitter.connect({secure: true });
+			emitter = window.emitter.connect({host: "10.0.0.20"/*, secure: true*/ });
 			emitter.on("connect", connectionHandler);
 		},
 		subscribe: function(channel, handler, last=0) {
