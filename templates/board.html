@@ -36,7 +36,8 @@
 
 	<div>
 		<label for="gameNumber">Game number</label>
-		<input readonly="" class="form-control input-sm" id="gameNumber" type="text" ng-model="game.id" style="width: 300px; display: inline-block"></input>		
+		<input readonly="" class="form-control input-sm" id="gameNumber" type="text" ng-model="game.id" style="width: 300px; display: inline-block"></input>	
+        <button ng-click="copyToClipboard()" type="button" class="btn btn-primary" style="width: 100px">Copy</button>
 	</div>
 
 </div>

@@ -1,7 +1,15 @@
-﻿.flag0
+#main-board
+{
+    margin: 10px;
+    height: 600px;
+    width: 530px;
+    background-image:url(/images/sand.jpg)
+}
+
+.flag0
 {
     background-repeat:no-repeat;
-    background-image: url(../images/redMine.png);
+    background-image: url(/images/redMine.png);
     background-size: 28px;
 	background-position: center center;
 }
@@ -15,7 +23,7 @@
 .flag1
 {
     background-repeat:no-repeat;
-    background-image: url(../images/greenMine.png);
+    background-image: url(/images/greenMine.png);
     background-size: 28px;
 	background-position: center center;
 }

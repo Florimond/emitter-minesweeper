@@ -30,7 +30,7 @@ var mainController = function ($scope, newGameInfo, emitterService)
 
 	$scope.connectToGame = function() 
 	{
-		if (!emitterConnected) // This shouldn't happen...
+		if (!emitterConnected)
 		{
 			alert("Waiting for emitter to connect. Please try again in a moment...");
 			return;

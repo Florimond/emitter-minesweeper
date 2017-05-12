@@ -1,5 +1,5 @@
-var gameController = function ($scope, guidGenerator, beachService, emitterService, newGameInfo) {
-
+var gameController = function ($scope, guidGenerator, beachService, emitterService, newGameInfo)
+{
 	function messageReceived(msg)
 	{
 		console.log('emitter: received ' + msg.type );
@@ -214,6 +214,13 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		remainingMines: 51,
 		beach: undefined
 	};
+    
+    $scope.copyToClipboard = function()
+    {
+		var successful = document.execCommand('copy');
+        if (!successful)
+            window.prompt('Copy to clipboard: Ctrl+C, Enter', $scope.game.id);
+    }
 	
 	// Initializing the players
 	// I find it useful to be able to refers the players both through an array and by a meaningful name...
