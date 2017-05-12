@@ -1,5 +1,5 @@
-var gameController = function ($scope, guidGenerator, beachService, emitterService, newGameInfo) {
-
+var gameController = function ($scope, guidGenerator, beachService, emitterService, newGameInfo)
+{
 	function messageReceived(msg)
 	{
 		console.log('emitter: received ' + msg.type );
