@@ -1,4 +1,4 @@
-var newGameInfo = function ()
+var newGameInfo = function (guidGenerator)
 {
     return	{
 		playerGUID: guidGenerator.getGuid(),
