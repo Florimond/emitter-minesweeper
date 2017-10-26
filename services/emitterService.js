@@ -3,6 +3,7 @@ var emitterService = function (emitterKey, baseChannel)
 	var emitter = null;	
 	return	{
 		connect: function(connectionHandler){
+			
 			emitter = window.emitter.connect({/*host: "10.0.0.20"*//*, secure: true*/ });
 			emitter.on("connect", connectionHandler);
 		},
@@ -25,6 +26,18 @@ var emitterService = function (emitterKey, baseChannel)
 				})
 			});
 		},
+		presence: function(channel, handler) {
+			console.log("presence init")
+			//emitter.on("presence", function(msg) {handler(msg.asObject())});
+			emitter.on("presence", function(msg) {console.log(msg)})
+			
+			emitter.presence({
+				key: emitterKey,
+				channel: baseChannel + "/" + channel,
+				status: true,
+				changes: true
+			})
+		}
 		
 	}		
 }
