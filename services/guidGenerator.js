@@ -1,6 +1,6 @@
-var guidGenerator = angular.module('guidGenerator', []);
+//var guidGenerator = angular.module('guidGenerator', []);
 
-guidGenerator.factory('guidGenerator', function () {
+var guidGenerator = function () {
     return {
         getGuid: function () {
             // See : http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
@@ -10,4 +10,4 @@ guidGenerator.factory('guidGenerator', function () {
 			});
         }
     };
-});
+};

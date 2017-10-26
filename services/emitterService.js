@@ -28,6 +28,18 @@ var emitterService = function (emitterKey, baseChannel)
 				})
 			});
 		},
+		presence: function(channel, handler) {
+			console.log("presence init")
+			//emitter.on("presence", function(msg) {handler(msg.asObject())});
+			emitter.on("presence", function(msg) {console.log(msg)})
+			
+			emitter.presence({
+				key: emitterKey,
+				channel: baseChannel + "/" + channel,
+				status: true,
+				changes: true
+			})
+		}
 		
 	}		
 }
