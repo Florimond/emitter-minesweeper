@@ -12,6 +12,6 @@ var connectToGameController = function ($scope, newGameInfo, emitterService)
                 break
         }
 	}
-
+	console.log("connectToGameController")
     emitterService.presence("lobby", presenceReceived)
 }

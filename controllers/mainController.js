@@ -22,18 +22,22 @@ var mainController = function ($scope, newGameInfo, emitterService)
 		}*/
 		console.log("connectToGameMenu")
 
-		emitterService.connect(function(){
+		emitterService.connect(newGameInfo.playerNickname, connectionHandler, function(){
+			console.log("callback")
 			$scope.view = "templates/connectToGameMenu.html";
+			$scope.$apply()
 		})
 	}
 	$scope.startGame = function()
 	{
 		console.log( newGameInfo.playerNickname)
-		emitterService.connect({secure: false, username: newGameInfo.playerNickname},function(){
+		emitterService.connect(newGameInfo.playerNickname, connectionHandler,function(){
+			console.log("callback")
 			$scope.view = "templates/board.html";
 			newGameInfo.playerId = 0;
 			// Subscribe to show up in the list of games waiting for a second player.
-			emitterService.subscribe("lobby", function() {})			
+			emitterService.subscribe("lobby", function() {})	
+			$scope.$apply()		
 		})
 	}
 
