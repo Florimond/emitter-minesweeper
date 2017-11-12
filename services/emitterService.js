@@ -6,8 +6,12 @@ var emitterService = function (emitterKey, baseChannel)
         {
 			emitter = window.emitter.connect({username: username}, function() {
 				callback()
-				emitter.on("connect", handler);
+				emitter.on("connect", handler)
 			})//{/*host: "10.0.0.20"*//*, secure: true*/ });
+		},
+		me: function(handler){
+			emitter.on("me", handler)
+			emitter.me()
 		},
 		subscribe: function(channel, handler, last=0)
         {
@@ -16,7 +20,8 @@ var emitterService = function (emitterKey, baseChannel)
 				key: emitterKey,
 				channel: baseChannel + "/" + channel,
 				last});
-			emitter.on("message", function(msg) {handler(msg.asObject());});
+			emitter.on("message", function(msg) {console.log(msg);handler(msg.asObject());});
+			//emitter.on("message", function(msg) {console.log(msg)});
 		},
 		publish: function(type, data, channel)
         {

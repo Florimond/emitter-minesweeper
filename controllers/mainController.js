@@ -1,4 +1,4 @@
-var mainController = function ($scope, newGameInfo, emitterService)
+var mainController = function ($scope, $location, newGameInfo, emitterService)
 {	
 	var emitterConnected = false;
 	function connectionHandler()
@@ -35,8 +35,6 @@ var mainController = function ($scope, newGameInfo, emitterService)
 			console.log("callback")
 			$scope.view = "templates/board.html";
 			newGameInfo.playerId = 0;
-			// Subscribe to show up in the list of games waiting for a second player.
-			emitterService.subscribe("lobby", function() {})	
 			$scope.$apply()		
 		})
 	}
