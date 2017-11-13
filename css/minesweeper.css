@@ -1,9 +1,9 @@
 #main-board
 {
     margin: 10px;
-    height: 570px;
-    width: 530px;
-    background-image:url(/images/sand.jpg)
+    height: 578px;
+    width: 560px;
+    background-image:url(/images/sand.jpg);
 }
 
 .flag0
@@ -110,12 +110,13 @@
 
 .score-board
 {
-	
+	/*margin-top: 100px*/
+	padding: 10px
 }
 
 .player-name
 {
-	width: 140px;
+	width: 120px;
 	display: inline-block;
 }
 .score
