@@ -2,8 +2,8 @@
 {
     margin: 10px;
     height: 578px;
-    width: 560px;
-    /*background-image:url(/images/sand.jpg);*/
+	width: 560px;
+	background: url(/images/background.png) repeat;
 }
 
 .title{
