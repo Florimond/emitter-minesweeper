@@ -3,7 +3,11 @@
     margin: 10px;
     height: 578px;
     width: 560px;
-    background-image:url(/images/sand.jpg);
+    /*background-image:url(/images/sand.jpg);*/
+}
+
+.title{
+	font-size: 3.5rem;
 }
 
 .flag0
@@ -16,7 +20,7 @@
 
 .hovering0
 {
-	border: 3px dashed red !important;
+	border: 3px dashed black !important;
 	border-radius: 4px
 }
 
@@ -145,14 +149,19 @@
 
 .remaining-mines
 {
-	display: inline-block;
-	background-color: red;
-	color: white;
-	height: 30px;
-	width: 50px;
-	border-radius: 10px;
-	border: 2px darkred solid;
-	text-align: center;
-	font-size: 18px;
-	font-weight: bold;
+    display: inline-block;
+    height: 30px;
+    width: 50px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.btn-menu{
+	margin: 5px;
+	width: 100%;
+}
+
+.btn-primary {
+	border-color: #333;
 }
