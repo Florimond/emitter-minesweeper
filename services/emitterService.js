@@ -2,10 +2,16 @@ var emitterService = function (emitterKey, baseChannel)
 {
 	var emitter = null;	
 	return	{
-		connect: function(connectionHandler)
+		connect: function(username, handler, callback)
         {
-			emitter = window.emitter.connect({/*host: "10.0.0.20"*//*, secure: true*/ });
-			emitter.on("connect", connectionHandler);
+			emitter = window.emitter.connect({username: username}, function() {
+				callback()
+				emitter.on("connect", handler)
+			})//{/*host: "10.0.0.20"*//*, secure: true*/ });
+		},
+		me: function(handler){
+			emitter.on("me", handler)
+			emitter.me()
 		},
 		subscribe: function(channel, handler, last=0)
         {
@@ -14,7 +20,8 @@ var emitterService = function (emitterKey, baseChannel)
 				key: emitterKey,
 				channel: baseChannel + "/" + channel,
 				last});
-			emitter.on("message", function(msg) {handler(msg.asObject());});
+			emitter.on("message", function(msg) {console.log(msg);handler(msg.asObject());});
+			//emitter.on("message", function(msg) {console.log(msg)});
 		},
 		publish: function(type, data, channel)
         {
@@ -29,9 +36,9 @@ var emitterService = function (emitterKey, baseChannel)
 			});
 		},
 		presence: function(channel, handler) {
-			console.log("presence init")
-			//emitter.on("presence", function(msg) {handler(msg.asObject())});
-			emitter.on("presence", function(msg) {console.log(msg)})
+			console.log("presence init ")
+			emitter.on("presence", function(msg) {handler(msg)});
+			//emitter.on("presence", function(msg) {console.log(msg)})
 			
 			emitter.presence({
 				key: emitterKey,

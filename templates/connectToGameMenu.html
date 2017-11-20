@@ -1,5 +1,6 @@
-<div>
+<div ng-controller="connectToGameController" >
 		<div>
+			<!--
 			<label for="nickname">Your nickname</label>
 			<input class="form-control input-md" id="nickname" type="text" style="width: 300px" ng-model="newGameInfo.playerNickname"></input>
 			
@@ -7,15 +8,15 @@
 			<input class="form-control input-md" id="gameId" ng-model="newGameInfo.gameToConnect" type="text" style="width: 300px"></input>
 
 			<button ng-click="connectToGame()" type="button" class="btn btn-primary" style="width: 150px">Connect to game</button>
+			-->
 		</div>
 
 		<div class="list-group">
-			<button type="button" class="list-group-item list-group-item-action active">
-			  Cras justo odio
-			</button>
-			<button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
-			<button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
-			<button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
-			<button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button>
+			<a href="#"
+			 class="list-group-item list-group-item-action"
+			 ng-repeat="person in who"
+			 ng-click="connectToGame(person.id)">
+				{{person.username}}
+			</a>
 		</div>
 </div>

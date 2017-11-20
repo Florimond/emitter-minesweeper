@@ -6,4 +6,5 @@ angular.module("minesweeper", [])
 .value("baseChannel", "minesweeper")
 .factory("emitterService", ["emitterKey", "baseChannel", emitterService])
 .controller("gameController", gameController)
+.controller("connectToGameController", connectToGameController)
 .controller("mainController", mainController);

@@ -16,7 +16,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 					emitterService.publish(
 						"beach",
 						{beach: $scope.game.beach, playerName: thisPlayer.name},
-						$scope.game.id + "/0");				
+						newGameInfo.gameId + "/0");				
 				}
 				break;
 			case "beach":
@@ -29,7 +29,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 					
 					// Let's indicate to the master that we are ready to start.
 					$scope.game.state = GAME_STATES.WAITING_MOVE_REMOTE;
-					emitterService.publish("ready", null, $scope.game.id + "/1");
+					emitterService.publish("ready", null, newGameInfo.gameId + "/1");
 					$scope.$apply();
 					console.log("Beach received, ready!");
 				}
@@ -109,7 +109,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	$scope.click = function (x, y) 
 	{
 		if ($scope.game.state != GAME_STATES.WAITING_MOVE_LOCAL) return;
-		emitterService.publish("click", {x: x, y: y}, $scope.game.id + "/" + thisPlayer.id);
+		emitterService.publish("click", {x: x, y: y}, newGameInfo.gameId + "/" + thisPlayer.id);
 		var mineFound = discoverTile(x, y, thisPlayer);
 		if (!mineFound) $scope.game.state = GAME_STATES.WAITING_MOVE_REMOTE;
 	};
@@ -145,7 +145,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	{
 		if ($scope.game.state != GAME_STATES.WAITING_MOVE_LOCAL) return;
 		setHoverClass(x, y, thisPlayer);
-		emitterService.publish("hover", {x: x, y: y}, $scope.game.id + "/" + thisPlayer.id)
+		emitterService.publish("hover", {x: x, y: y}, newGameInfo.gameId + "/" + thisPlayer.id)
 	};
 	
 	// Choose a css class for every tile.
@@ -167,23 +167,30 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	// Connect to an existing game
 	function connectToGame()
 	{
-		$scope.game.id = newGameInfo.gameToConnect;
+		//newGameInfo.gameId = newGameInfo.gameToConnect;
 		$scope.game.state = GAME_STATES.WAITING_SYNC;
 		// Subscribe to the opponent's channel.
-		emitterService.subscribe($scope.game.id + "/0", messageReceived);
-		emitterService.publish("init", {playerName: thisPlayer.name}, $scope.game.id + "/1");
+		emitterService.subscribe(newGameInfo.gameId + "/0", messageReceived);
+		console.log(thisPlayer)
+		console.log(newGameInfo.gameId + "/1")
+		emitterService.publish("init", {playerName: thisPlayer.name}, newGameInfo.gameId + "/1");
 	}
 
 	// Initialize a new game
 	function startGame(beachWidth, beachHeight, numberOfMines)
 	{
-		$scope.game.id = guidGenerator.getGuid();
 		$scope.game.beach = beachService.generateBeach(beachWidth, beachHeight, numberOfMines);	
 		classifyBeach($scope.game.beach);
-		// Subscribe to the opponent's channel.
-		emitterService.subscribe($scope.game.id + "/1", messageReceived);
-		// Waiting for an opponent to send a hello message with his name.
-		$scope.game.state = GAME_STATES.WAITING_SYNC;
+		emitterService.me(function(me){
+			newGameInfo.gameId = me.id
+			console.log(newGameInfo.gameId + "/1")
+			// Subscribe to the opponent's channel.
+			emitterService.subscribe(newGameInfo.gameId + "/1", messageReceived);
+			// Waiting for an opponent to send a hello message with his name.
+			$scope.game.state = GAME_STATES.WAITING_SYNC;
+			// Subscribe to show up in the list of games waiting for a second player.
+			emitterService.subscribe("lobby", messageReceived)//, function() {})							
+		})
 	}
 	
 	/////////////////////////////////////
@@ -219,7 +226,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
     {
 		var successful = document.execCommand('copy');
         if (!successful)
-            window.prompt('Copy to clipboard: Ctrl+C, Enter', $scope.game.id);
+            window.prompt('Copy to clipboard: Ctrl+C, Enter', newGameInfo.gameId);
     }
 	
 	// Initializing the players
@@ -231,7 +238,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 	var thisPlayer = $scope.players[newGameInfo.playerId];
 	var opponent = $scope.players[newGameInfo.getOpponentId()];
 	thisPlayer.name = newGameInfo.playerNickname;
-	
+
 	if (thisPlayer.isMaster)
 		startGame(16, 16, 51);
 	else
