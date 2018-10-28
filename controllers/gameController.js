@@ -12,6 +12,8 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 				{
 					console.log("init in");
 					opponent.name = msg.data.playerName;
+					// Unsubscribe from the lobby.
+					emitterService.unsubscribe("lobby")
 					// Let's send back some greetings with the generated beach.
 					emitterService.publish(
 						"beach",
@@ -25,8 +27,7 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 				{
 					console.log("beach in");
 					$scope.game.beach = msg.data.beach;
-					opponent.name = msg.data.playerName;
-					
+					opponent.name = msg.data.playerName;						
 					// Let's indicate to the master that we are ready to start.
 					$scope.game.state = GAME_STATES.WAITING_MOVE_REMOTE;
 					emitterService.publish("ready", null, newGameInfo.gameId + "/1");
@@ -221,13 +222,6 @@ var gameController = function ($scope, guidGenerator, beachService, emitterServi
 		remainingMines: 51,
 		beach: undefined
 	};
-    
-    $scope.copyToClipboard = function()
-    {
-		var successful = document.execCommand('copy');
-        if (!successful)
-            window.prompt('Copy to clipboard: Ctrl+C, Enter', newGameInfo.gameId);
-    }
 	
 	// Initializing the players
 	// I find it useful to be able to refers the players both through an array and by a meaningful name...

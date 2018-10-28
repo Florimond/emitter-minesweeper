@@ -23,6 +23,13 @@ var emitterService = function (emitterKey, baseChannel)
 			emitter.on("message", function(msg) {console.log(msg);handler(msg.asObject());});
 			//emitter.on("message", function(msg) {console.log(msg)});
 		},
+		unsubscribe: function(channel)
+        {
+			console.log("Unsubscribe from " + channel)
+			emitter.unsubscribe({
+				key: emitterKey,
+				channel: baseChannel + "/" + channel});
+		},
 		publish: function(type, data, channel)
         {
 			emitter.publish({

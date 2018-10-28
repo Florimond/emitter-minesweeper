@@ -27,6 +27,11 @@ var connectToGameController = function ($scope, newGameInfo, emitterService)
         //$scope.$parent.$parent.$apply()
     }
 
+    $scope.backToMain = function()
+    {
+        $scope.$parent.$parent.view = "templates/menu.html"
+    }
+
 	console.log("connectToGameController")
     emitterService.presence("lobby", presenceReceived)
 }
