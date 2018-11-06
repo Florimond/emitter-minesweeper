@@ -13,6 +13,23 @@ var connectToGameController = function ($scope, newGameInfo, emitterService)
                 $scope.who = msg.who
                 $scope.$apply()
                 break
+            case "subscribe":
+                $scope.who.push(msg.who)
+                $scope.$apply()
+                break
+            case "unsubscribe":
+                for( var i = 0; i < $scope.who.length; ++i)
+                { 
+                    if ( $scope.who[i].id == msg.who.id)
+                    {
+                        $scope.who.splice(i, 1)
+                        break 
+                    }
+                }
+                $scope.$apply()
+                break
+            default:
+                console.log(msg)
         }
     }
 
